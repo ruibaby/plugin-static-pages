@@ -7,23 +7,22 @@
 模型：
 
 ```yaml
-kind: StaticPage
-group: static-pages.halo.run
+kind: Project
+group: staticpage.halo.run
 version: v1alpha1
 metadata:
-  name: my-blog
+    name: my-blog
 spec:
-  # static/my-blog
-  folder: my-blog
-  title: My Blog
-  description: My Blog Description
-  # 用于暴露 api 上传静态资源的时候的认证，可以利用 Secret 模型存储
-  secret: my-secret
+    # static/my-blog
+    directory: my-blog
+    title: My Blog
+    description: My Blog Description
 ```
 
 接口：
 
-- GET /apis/api.console.halo.run/v1alpha1/static-pages/files/upload 上传静态资源，利用 metadata.name 和 secret 进行认证。
+- POST /apis/console.api.staticpage.halo.run/v1alpha1/projects/{name}/upload 上传静态资源，利用 metadata.name 和
+  secret 进行认证。
 - PUT /apis/api.console.halo.run/v1alpha1/static-pages/files/content?file=xxx.index&name=my-blog 更新静态资源。
 - GET /apis/api.console.halo.run/v1alpha1/static-pages/files/content?file=xxx.index&name=my-blog 获取静态资源。
 - DELETE /apis/api.console.halo.run/v1alpha1/static-pages/files/content?file=xxx.index&name=my-blog 删除静态资源。
@@ -45,39 +44,39 @@ hsp deploy --name=my-blog --secret=my-secret --dist=dist
 name: Node.js CI
 
 on:
-  push:
-    branches: [ main ]
-  # 或者 release 的时候部署
-  release:
-    types: 
-      - created
+    push:
+        branches: [ main ]
+    # 或者 release 的时候部署
+    release:
+        types:
+            - created
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    needs: check
-    if: github.event_name == 'push'
-    steps:
-    - uses: actions/checkout@v2
+    build:
+        runs-on: ubuntu-latest
+        needs: check
+        if: github.event_name == 'push'
+        steps:
+            -   uses: actions/checkout@v2
 
-    - name: Install pnpm
-      uses: pnpm/action-setup@v2.0.1
-      with:
-        version: 8
+            -   name: Install pnpm
+                uses: pnpm/action-setup@v2.0.1
+                with:
+                    version: 8
 
-    - name: Use Node.js 18.x
-      uses: actions/setup-node@v2
-      with:
-        node-version: 18.x
-        cache: 'pnpm'
+            -   name: Use Node.js 18.x
+                uses: actions/setup-node@v2
+                with:
+                    node-version: 18.x
+                    cache: 'pnpm'
 
-    - run: pnpm install
-    - run: pnpm build
+            -   run: pnpm install
+            -   run: pnpm build
 
-    - name: Deploy
-      uses: ruibaby/static-pages-deploy@main
-      env:
-        NAME: ${{ secrets.WEBSITE_ID }}
-        SECRET: ${{ secrets.WEBSITE_SECRET }}
-        HOST: ${{ secrets.HOST }}
-        TARGET: "dist/"
+            -   name: Deploy
+                uses: ruibaby/static-pages-deploy@main
+                env:
+                    NAME: ${{ secrets.WEBSITE_ID }}
+                    SECRET: ${{ secrets.WEBSITE_SECRET }}
+                    HOST: ${{ secrets.HOST }}
+                    TARGET: "dist/"
 ```

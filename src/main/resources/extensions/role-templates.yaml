@@ -1,0 +1,13 @@
+apiVersion: v1alpha1
+kind: Role
+metadata:
+  name: staticpage-project-upload
+  labels:
+    halo.run/role-template: "true"
+  annotations:
+    rbac.authorization.halo.run/module: "静态项目"
+    rbac.authorization.halo.run/display-name: "项目资源上传"
+rules:
+  - apiGroups: [ "console.api.staticpage.halo.run" ]
+    resources: [ "projects/upload" ]
+    verbs: [ "create" ]
