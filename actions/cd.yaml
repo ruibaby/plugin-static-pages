@@ -1,0 +1,33 @@
+name: CD
+
+on:
+  workflow_call:
+    inputs:
+      dist-path:
+        type: string
+        required: false
+        default: dist
+        description: Dist path, default is dist, Must be a folder.
+    secrets:
+      endpoint:
+        description: Halo Backend Base URL.
+        required: true
+      id:
+        description: App ID for deploy static pages.
+        required: true
+      pat:
+        description: Personal Access Token for deploy static pages.
+        required: true
+jobs:
+  deploy:
+    name: Deploy to Halo
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "20"
+      - name: Deploy to Halo
+        run: |
+          npx halo-static-pages-deploy-cli deploy -e ${{ secrets.endpoint }} -i ${{ secrets.id }} -t ${{ secrets.pat }} -f ${{ inputs.dist-path }}

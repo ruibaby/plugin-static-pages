@@ -1,26 +1,40 @@
 import { definePlugin } from "@halo-dev/console-shared";
-import HomeView from "./views/HomeView.vue";
-import { IconPlug } from "@halo-dev/components";
+import Projects from "./views/Projects.vue";
 import { markRaw } from "vue";
+import CarbonWebServicesContainer from "~icons/carbon/web-services-container";
+import "./styles/tailwind.css";
+import ProjectDetail from "./views/ProjectDetail.vue";
 
 export default definePlugin({
   components: {},
   routes: [
     {
-      parentName: "Root",
+      parentName: "ToolsRoot",
       route: {
-        path: "/example",
-        name: "Example",
-        component: HomeView,
+        path: "static-pages",
+        name: "StaticPageProjects",
+        component: Projects,
         meta: {
-          title: "示例页面",
+          title: "静态网页服务",
+          description: "提供静态网页部署服务",
           searchable: true,
           menu: {
-            name: "示例页面",
-            group: "示例分组",
-            icon: markRaw(IconPlug),
+            name: "静态网页服务",
+            icon: markRaw(CarbonWebServicesContainer),
             priority: 0,
           },
+        },
+      },
+    },
+    {
+      parentName: "ToolsRoot",
+      route: {
+        path: "static-pages/:name",
+        name: "StaticPageProjectDetail",
+        component: ProjectDetail,
+        meta: {
+          title: "静态网页详情",
+          searchable: false,
         },
       },
     },

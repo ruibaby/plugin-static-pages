@@ -1,0 +1,26 @@
+import type { Metadata } from "@halo-dev/api-client";
+
+export interface Project {
+  spec: Spec;
+  apiVersion: "staticpage.halo.run/v1alpha1";
+  kind: "Project";
+  metadata: Metadata;
+}
+
+export interface Spec {
+  title: string;
+  description?: string;
+  directory: string;
+}
+
+export interface ListResponse<T> {
+  page: number;
+  size: number;
+  total: number;
+  items: T[];
+  first: boolean;
+  last: boolean;
+  hasNext: boolean;
+  hasPrevious: boolean;
+  totalPages: number;
+}
