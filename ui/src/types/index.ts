@@ -24,3 +24,14 @@ export interface ListResponse<T> {
   hasPrevious: boolean;
   totalPages: number;
 }
+
+export interface ProjectFile {
+  name: string;
+  path: string;
+  size: number;
+  type: string;
+  lastModifiedTime: string;
+  canRead: boolean;
+  canWrite: boolean;
+  directory: boolean;
+}
