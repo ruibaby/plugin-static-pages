@@ -28,7 +28,7 @@ jobs:
         run: npm run docs:build
 
   deploy:
-    uses: ruibaby/plugin-static-pages/actions/cd.yaml@main
+    uses: ruibaby/plugin-static-pages/.github/workflows/cd.yaml@main
     secrets:
       endpoint: ${{ secrets.ENDPOINT }}
       id: ${{ secrets.ID }}
