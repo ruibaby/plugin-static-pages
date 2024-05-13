@@ -33,6 +33,7 @@ const { mutate, isLoading } = useMutation({
         title: data.title,
         directory: data.directory,
         description: data.description,
+        rewrites: data.rewrites,
       },
     });
 

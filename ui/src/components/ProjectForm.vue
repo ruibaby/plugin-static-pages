@@ -51,5 +51,19 @@ function onSubmit(data: ProjectFormState) {
       :model-value="formState?.description"
       label="描述"
     ></FormKit>
+    <FormKit type="repeater" name="rewrites" label="重写规则">
+      <FormKit
+        type="text"
+        name="source"
+        label="源"
+        validation="required"
+      ></FormKit>
+      <FormKit
+        type="text"
+        name="target"
+        label="目标"
+        validation="required"
+      ></FormKit>
+    </FormKit>
   </FormKit>
 </template>
