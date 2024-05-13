@@ -17,6 +17,11 @@ spec:
     directory: my-blog
     title: My Blog
     description: My Blog Description
+    rewrites:
+        -   source: "**"
+            target: index.html
+        -   source: "/"
+            target: index.html
 ```
 
 接口：

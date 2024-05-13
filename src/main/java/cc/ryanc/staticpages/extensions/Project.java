@@ -1,8 +1,10 @@
 package cc.ryanc.staticpages.extensions;
 
+import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.NOT_REQUIRED;
 import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.List;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import run.halo.app.extension.AbstractExtension;
@@ -27,5 +29,18 @@ public class Project extends AbstractExtension {
 
         @Schema(requiredMode = REQUIRED, minLength = 1)
         private String directory;
+
+        @Schema(requiredMode = NOT_REQUIRED)
+        private List<Rewrite> rewrites;
+    }
+
+    @Data
+    @Schema(name = "ProjectRewrite")
+    public static class Rewrite {
+        @Schema(requiredMode = REQUIRED, minLength = 1)
+        private String source;
+
+        @Schema(requiredMode = REQUIRED, minLength = 1)
+        private String target;
     }
 }
