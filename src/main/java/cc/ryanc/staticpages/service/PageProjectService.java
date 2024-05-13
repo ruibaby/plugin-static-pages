@@ -11,4 +11,6 @@ public interface PageProjectService {
     Mono<Path> upload(UploadContext uploadContext);
 
     Flux<ProjectFile> listFiles(String projectName, String directoryPath);
+
+    Mono<Boolean> deleteFile(String projectName, String path);
 }

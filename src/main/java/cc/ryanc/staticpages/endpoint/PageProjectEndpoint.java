@@ -88,6 +88,27 @@ public class PageProjectEndpoint implements CustomEndpoint {
                 )
                 .response(responseBuilder().implementation(String.class))
             )
+            .DELETE("/projects/{name}/files", request -> {
+                    var projectName = request.pathVariable("name");
+                    var path = request.queryParam("path").orElse(null);
+                    return pageProjectService.deleteFile(projectName, path)
+                        .flatMap(result -> ServerResponse.ok().bodyValue(result));
+                }, builder -> builder
+                    .operationId("DeleteFileInProject")
+                    .description("Delete file or directory in project by given path")
+                    .tag(tag)
+                    .parameter(parameterBuilder()
+                        .in(ParameterIn.PATH)
+                        .name("name")
+                        .required(true)
+                    )
+                    .parameter(parameterBuilder()
+                        .in(ParameterIn.QUERY)
+                        .required(false)
+                        .name("path")
+                    )
+                    .response(responseBuilder().implementation(Boolean.class))
+            )
             .build();
     }
 

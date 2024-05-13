@@ -25,8 +25,8 @@ spec:
   secret 进行认证。
 - PUT /apis/api.console.halo.run/v1alpha1/static-pages/files/content?file=xxx.index&name=my-blog 更新静态资源。
 - GET /apis/api.console.halo.run/v1alpha1/static-pages/files/content?file=xxx.index&name=my-blog 获取静态资源。
-- DELETE /apis/api.console.halo.run/v1alpha1/static-pages/files/content?file=xxx.index&name=my-blog 删除静态资源。
-- GET /apis/api.console.halo.run/v1alpha1/static-pages/files?name=my-blog 获取静态资源列表。
+- DELETE /apis/console.api.staticpage.halo.run/v1alpha1/projects/{name}/files?path=xxx 删除项目中的文件或目录。
+- GET /apis/console.api.staticpage.halo.run/v1alpha1/projects/{name}/files?path=xxx 获取项目文件列表。
 
 ## CLI
 

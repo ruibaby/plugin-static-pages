@@ -22,6 +22,7 @@ import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+import org.springframework.util.FileSystemUtils;
 import org.springframework.web.server.ServerWebInputException;
 import reactor.core.Exceptions;
 import reactor.core.publisher.Flux;
@@ -115,6 +116,16 @@ public class PageProjectServiceImpl implements PageProjectService {
         return client.get(Project.class, name)
             .map(project -> extractProjectFilePath(project, directoryPath))
             .flatMapMany(PageProjectServiceImpl::doListFiles);
+    }
+
+    @Override
+    public Mono<Boolean> deleteFile(String projectName, String path) {
+        return client.get(Project.class, projectName)
+            .map(project -> extractProjectFilePath(project, path))
+            .flatMap(filePath -> Mono.fromCallable(
+                    () -> FileSystemUtils.deleteRecursively(filePath))
+                .subscribeOn(Schedulers.boundedElastic())
+            );
     }
 
     Path extractProjectFilePath(Project project, String extractPath) {
