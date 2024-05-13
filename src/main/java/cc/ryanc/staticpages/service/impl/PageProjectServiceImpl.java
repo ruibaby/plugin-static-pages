@@ -53,7 +53,11 @@ public class PageProjectServiceImpl implements PageProjectService {
     private static Flux<ProjectFile> doListFiles(Path pathToList) {
         return Flux.<ProjectFile>create(sink -> {
                 File directory = pathToList.toFile();
-                if (!directory.exists() || !directory.isDirectory()) {
+                if (!directory.exists()) {
+                    sink.complete();
+                    return;
+                }
+                if (!directory.isDirectory()) {
                     sink.error(new ServerWebInputException("The path is not a directory."));
                     return;
                 }
