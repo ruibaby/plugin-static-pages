@@ -16,6 +16,13 @@ const { data, isLoading } = useQuery({
     );
     return data;
   },
+  refetchInterval(data) {
+    const hasDeletingData = data?.items.some(
+      (project) => !!project.metadata.deletionTimestamp
+    );
+
+    return hasDeletingData ? 1000 : false;
+  },
 });
 
 const creationModalVisible = ref(false);
