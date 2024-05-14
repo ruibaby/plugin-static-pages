@@ -4,7 +4,11 @@ import cc.ryanc.staticpages.extensions.Project;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import lombok.Builder;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.pattern.PathPattern;
@@ -13,7 +17,7 @@ import run.halo.app.infra.utils.PathUtils;
 
 @Component
 public class ProjectRewriteRules {
-    private final Map<String, List<PathPattern>> projectPatterns = new ConcurrentHashMap<>();
+    private final Map<SimpleProject, List<PathPattern>> projectPatterns = new ConcurrentHashMap<>();
     @Getter
     private final Map<PathPattern, String> rewriteRules = new ConcurrentHashMap<>();
     private final PathPatternParser patternParser = PathPatternParser.defaultInstance;
@@ -21,24 +25,41 @@ public class ProjectRewriteRules {
     public void updateRules(Project project) {
         var rules = project.getSpec().getRewrites();
         if (rules == null) {
-            return;
+            var rewrite = new Project.Rewrite();
+            rewrite.setSource("/");
+            rewrite.setTarget("/index.html");
+            rules = List.of(rewrite);
         }
-        removeRule(project.getMetadata().getName());
+        var simpleProject = SimpleProject.builder()
+            .name(project.getMetadata().getName())
+            .rootPath(project.getSpec().getDirectory())
+            .build();
+        removeRule(simpleProject);
         for (Project.Rewrite rule : rules) {
             var source = sourceInProject(project, rule.getSource());
             var targetPath = sourceInProject(project, rule.getTarget());
-            addRule(project.getMetadata().getName(), source, targetPath);
+            addRule(simpleProject, source, targetPath);
         }
     }
 
     public void removeRules(Project project) {
-        var projectName = project.getMetadata().getName();
-        removeRule(projectName);
+        var simpleProject = SimpleProject.builder()
+            .name(project.getMetadata().getName())
+            .rootPath(project.getSpec().getDirectory())
+            .build();
+        removeRule(simpleProject);
     }
 
-    void addRule(String projectName, String key, String value) {
+    public Set<String> getProjectRootPaths() {
+        return projectPatterns.keySet()
+            .stream()
+            .map(SimpleProject::rootPath)
+            .collect(Collectors.toSet());
+    }
+
+    void addRule(SimpleProject project, String key, String value) {
         PathPattern pattern = patternParser.parse(key);
-        projectPatterns.compute(projectName, (k, v) -> {
+        projectPatterns.compute(project, (k, v) -> {
             if (v == null) {
                 v = new ArrayList<>();
             }
@@ -48,8 +69,8 @@ public class ProjectRewriteRules {
         rewriteRules.put(pattern, value);
     }
 
-    void removeRule(String projectName) {
-        var patterns = projectPatterns.remove(projectName);
+    void removeRule(SimpleProject project) {
+        var patterns = projectPatterns.remove(project);
         if (patterns == null) {
             return;
         }
@@ -60,5 +81,25 @@ public class ProjectRewriteRules {
 
     String sourceInProject(Project project, String source) {
         return PathUtils.combinePath(project.getSpec().getDirectory(), source);
+    }
+
+    @Builder
+    record SimpleProject(String name, String rootPath) {
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            SimpleProject that = (SimpleProject) o;
+            return Objects.equals(name, that.name);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(name);
+        }
     }
 }
