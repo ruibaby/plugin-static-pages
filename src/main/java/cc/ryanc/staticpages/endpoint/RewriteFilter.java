@@ -35,6 +35,7 @@ public class RewriteFilter implements AdditionalWebFilter {
 
     private PathContainer normalizePath(PathContainer pathContainer) {
         if (pathContainer.value().endsWith("/")) {
+            // Remove trailing slash
             return pathContainer.subPath(0, pathContainer.elements().size() - 1);
         }
         return pathContainer;
