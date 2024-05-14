@@ -2,6 +2,7 @@ package cc.ryanc.staticpages.endpoint;
 
 import cc.ryanc.staticpages.service.ProjectRewriteRules;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.server.PathContainer;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
@@ -18,9 +19,10 @@ public class RewriteFilter implements AdditionalWebFilter {
     @NonNull
     public Mono<Void> filter(@NonNull ServerWebExchange exchange, @NonNull WebFilterChain chain) {
         var request = exchange.getRequest();
+        var requestPath = normalizePath(request.getPath().pathWithinApplication());
 
         for (var entry : rewriteRules.getRewriteRules().entrySet()) {
-            if (entry.getKey().matches(request.getPath().pathWithinApplication())) {
+            if (entry.getKey().matches(requestPath)) {
                 String rewrittenPath = entry.getValue();
                 var newExchange = exchange.mutate()
                     .request(request.mutate().path(rewrittenPath).build())
@@ -29,6 +31,13 @@ public class RewriteFilter implements AdditionalWebFilter {
             }
         }
         return chain.filter(exchange);
+    }
+
+    private PathContainer normalizePath(PathContainer pathContainer) {
+        if (pathContainer.value().endsWith("/")) {
+            return pathContainer.subPath(0, pathContainer.elements().size() - 1);
+        }
+        return pathContainer;
     }
 
     @Override
