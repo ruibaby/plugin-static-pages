@@ -11,12 +11,13 @@ import {
   VTabbar,
 } from "@halo-dev/components";
 import { useQuery } from "@tanstack/vue-query";
-import { markRaw, type Component, type Raw } from "vue";
+import { markRaw, ref, type Component, type Raw } from "vue";
 import { useRoute } from "vue-router";
 import CarbonWebServicesContainer from "~icons/carbon/web-services-container";
 import Detail from "./tabs/Detail.vue";
 import Files from "./tabs/Files.vue";
 import { useRouteQuery } from "@vueuse/router";
+import ProjectEditModal from "@/components/ProjectEditModal.vue";
 
 interface Tab {
   id: string;
@@ -54,9 +55,16 @@ const activeTab = useRouteQuery("tab", tabs[0].id);
 function handleOpen() {
   window.open(`/${data.value?.spec.directory}/index.html`, "_blank");
 }
+
+const editModalVisible = ref(false);
 </script>
 
 <template>
+  <ProjectEditModal
+    v-if="editModalVisible && data"
+    :project="data"
+    @close="editModalVisible = false"
+  />
   <VPageHeader :title="data?.spec.title || '加载中...'">
     <template #icon>
       <CarbonWebServicesContainer class="sp-mr-2 sp-self-center" />
@@ -64,7 +72,7 @@ function handleOpen() {
     <template #actions>
       <VSpace>
         <VButton size="sm" @click="handleOpen"> 访问 </VButton>
-        <VButton>
+        <VButton @click="editModalVisible = true">
           <template #icon>
             <IconSettings class="sp-h-full sp-w-full" />
           </template>

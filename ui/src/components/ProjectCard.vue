@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import type { Project } from "@/types";
 import { VButton, VSpace, VStatusDot } from "@halo-dev/components";
+import { ref } from "vue";
+import ProjectEditModal from "./ProjectEditModal.vue";
 
 const props = withDefaults(
   defineProps<{
@@ -12,9 +14,17 @@ const props = withDefaults(
 function handleOpen() {
   window.open(`/${props.project.spec.directory}/index.html`, "_blank");
 }
+
+const editModalVisible = ref(false);
 </script>
 
 <template>
+  <ProjectEditModal
+    v-if="editModalVisible"
+    :project="project"
+    @close="editModalVisible = false"
+  />
+
   <div
     class="sp-cursor-pointer sp-rounded-lg sp-bg-white sp-px-4 sp-py-3 sp-group sp-shadow sp-transition-all hover:sp-ring-1"
   >
@@ -53,7 +63,7 @@ function handleOpen() {
           详情
         </VButton>
         <VButton size="sm" @click="handleOpen">访问</VButton>
-        <VButton size="sm">设置</VButton>
+        <VButton size="sm" @click="editModalVisible = true">设置</VButton>
       </VSpace>
     </div>
   </div>
