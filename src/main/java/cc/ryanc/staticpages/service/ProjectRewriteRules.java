@@ -26,7 +26,8 @@ public class ProjectRewriteRules {
         removeRule(project.getMetadata().getName());
         for (Project.Rewrite rule : rules) {
             var source = sourceInProject(project, rule.getSource());
-            addRule(project.getMetadata().getName(), source, rule.getTarget());
+            var targetPath = sourceInProject(project, rule.getTarget());
+            addRule(project.getMetadata().getName(), source, targetPath);
         }
     }
 
@@ -37,9 +38,6 @@ public class ProjectRewriteRules {
 
     void addRule(String projectName, String key, String value) {
         PathPattern pattern = patternParser.parse(key);
-        if (isInvalidPath(value)) {
-            throw new IllegalArgumentException("无效的路径值：" + value);
-        }
         projectPatterns.compute(projectName, (k, v) -> {
             if (v == null) {
                 v = new ArrayList<>();
@@ -62,9 +60,5 @@ public class ProjectRewriteRules {
 
     String sourceInProject(Project project, String source) {
         return PathUtils.combinePath(project.getSpec().getDirectory(), source);
-    }
-
-    private boolean isInvalidPath(String path) {
-        return !path.startsWith("/") || path.contains(" ");
     }
 }

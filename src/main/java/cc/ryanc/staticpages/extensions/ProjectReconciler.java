@@ -19,7 +19,7 @@ public class ProjectReconciler implements Reconciler<Reconciler.Request> {
     private static final String FINALIZER = "project-protection";
 
     private final ExtensionClient client;
-    private ProjectRewriteRules projectRewriteRules;
+    private final ProjectRewriteRules projectRewriteRules;
 
     @Override
     public Result reconcile(Request request) {
