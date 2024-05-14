@@ -4,5 +4,5 @@ export interface ProjectFormState {
   title: string;
   description?: string;
   directory: string;
-  rewrites: ProjectRewrite[];
+  rewrites?: ProjectRewrite[];
 }

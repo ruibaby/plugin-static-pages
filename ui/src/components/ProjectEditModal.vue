@@ -88,6 +88,7 @@ function handleDelete() {
         title: project.spec.title,
         description: project.spec.description,
         directory: project.spec.directory,
+        rewrites: project.spec.rewrites || [],
       }"
       @submit="onSubmit"
     />
