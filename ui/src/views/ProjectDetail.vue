@@ -53,7 +53,7 @@ const tabs: Tab[] = [
 const activeTab = useRouteQuery("tab", tabs[0].id);
 
 function handleOpen() {
-  window.open(`/${data.value?.spec.directory}/index.html`, "_blank");
+  window.open(`/${data.value?.spec.directory}`, "_blank");
 }
 
 const editModalVisible = ref(false);

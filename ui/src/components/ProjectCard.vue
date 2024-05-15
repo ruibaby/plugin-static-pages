@@ -12,7 +12,7 @@ const props = withDefaults(
 );
 
 function handleOpen() {
-  window.open(`/${props.project.spec.directory}/index.html`, "_blank");
+  window.open(`/${props.project.spec.directory}`, "_blank");
 }
 
 const editModalVisible = ref(false);
