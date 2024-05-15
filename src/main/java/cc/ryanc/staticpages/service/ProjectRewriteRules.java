@@ -23,9 +23,9 @@ public class ProjectRewriteRules {
     private final PathPatternParser patternParser = PathPatternParser.defaultInstance;
 
     private static List<Project.Rewrite> getRulesWithDefault(Project project) {
-        var rules = project.getSpec().getRewrites();
-        if (rules == null) {
-            rules = new ArrayList<>();
+        var rules = new ArrayList<Project.Rewrite>();
+        if (project.getSpec().getRewrites() != null) {
+            rules.addAll(project.getSpec().getRewrites());
         }
 
         var defaultRewrite = new Project.Rewrite();
