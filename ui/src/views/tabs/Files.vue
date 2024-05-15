@@ -2,7 +2,7 @@
 import type { Project, ProjectFile } from "@/types";
 import { apiClient } from "@/utils/api-client";
 import { useQuery } from "@tanstack/vue-query";
-import { computed, ref, toRefs } from "vue";
+import { computed, toRefs } from "vue";
 import prettyBytes from "pretty-bytes";
 import { formatDatetime, relativeTimeTo } from "@/utils/date";
 import FileIcon from "@/components/FileIcon.vue";
@@ -67,19 +67,19 @@ const breadcrumbItems = computed(() => {
 </script>
 
 <template>
-  <nav class="sp-flex sp-p-2.5" aria-label="Breadcrumb">
+  <nav class="sp-flex sp-px-2.5 sp-py-4" aria-label="Breadcrumb">
     <ol role="list" class="sp-flex sp-items-center sp-space-x-2">
       <li>
         <div>
           <span
-            @click="selectedDir = '/'"
             class="sp-text-gray-400 hover:sp-text-gray-500 sp-cursor-pointer"
+            @click="selectedDir = '/'"
           >
             <TablerHome class="sp-h-5 sp-w-5 sp-flex-shrink-0" />
           </span>
         </div>
       </li>
-      <li v-for="item in breadcrumbItems">
+      <li v-for="(item, index) in breadcrumbItems" :key="index">
         <div class="sp-flex sp-items-center">
           <svg
             class="sp-h-5 sp-w-5 sp-flex-shrink-0 sp-text-gray-300"
@@ -100,7 +100,7 @@ const breadcrumbItems = computed(() => {
     </ol>
   </nav>
 
-  <div class="sp-mt-5 sp-flow-root sp-overflow-hidden rounded-b-base">
+  <div class="sp-mt-4 sp-flow-root sp-overflow-hidden rounded-b-base">
     <div class="sp-overflow-x-auto">
       <div class="sp-inline-block sp-min-w-full sp-align-middle">
         <table class="sp-min-w-full sp-divide-y sp-divide-gray-300">
@@ -173,6 +173,7 @@ const breadcrumbItems = computed(() => {
             </tr>
             <tr
               v-for="file in data"
+              :key="file.path"
               class="even:sp-bg-gray-50 hover:sp-bg-blue-50 sp-cursor-pointer sp-group"
               @click="handleClickRow(file)"
             >

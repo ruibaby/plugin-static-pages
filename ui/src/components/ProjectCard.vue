@@ -26,9 +26,9 @@ const editModalVisible = ref(false);
   />
 
   <div
-    class="sp-cursor-pointer sp-rounded-lg sp-bg-white sp-px-4 sp-py-3 sp-group sp-shadow sp-transition-all hover:sp-ring-1"
+    class="sp-cursor-pointer sp-rounded-lg sp-space-y-4 sp-bg-white sp-flex sp-flex-col sp-px-4 sp-py-3 sp-group sp-shadow sp-transition-all hover:sp-ring-1"
   >
-    <div class="sp-flex sp-items-center sp-gap-4">
+    <div class="sp-flex sp-items-center sp-gap-4 sp-flex-none">
       <RouterLink
         :to="{
           name: 'StaticPageProjectDetail',
@@ -45,11 +45,11 @@ const editModalVisible = ref(false);
         state="warning"
       />
     </div>
-    <ul class="sp-mt-4 sp-space-y-2 sp-text-sm sp-text-gray-600">
+    <ul class="sp-space-y-2 sp-text-sm sp-text-gray-600 sp-flex-1">
       <li>{{ project.spec.description }}</li>
       <li class="sp-line-clamp-1">/{{ project.spec.directory }}</li>
     </ul>
-    <div class="sp-mt-4 sp-flex sp-justify-end">
+    <div class="sp-flex sp-justify-end sp-flex-none">
       <VSpace>
         <VButton
           size="sm"
