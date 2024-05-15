@@ -22,14 +22,26 @@ public class ProjectRewriteRules {
     private final Map<PathPattern, String> rewriteRules = new ConcurrentHashMap<>();
     private final PathPatternParser patternParser = PathPatternParser.defaultInstance;
 
-    public void updateRules(Project project) {
+    private static List<Project.Rewrite> getRulesWithDefault(Project project) {
         var rules = project.getSpec().getRewrites();
         if (rules == null) {
-            var rewrite = new Project.Rewrite();
-            rewrite.setSource("/");
-            rewrite.setTarget("/index.html");
-            rules = List.of(rewrite);
+            rules = new ArrayList<>();
         }
+
+        var defaultRewrite = new Project.Rewrite();
+        defaultRewrite.setSource("/");
+        defaultRewrite.setTarget("/index.html");
+
+        if (!rules.contains(defaultRewrite)) {
+            rules.add(defaultRewrite);
+        }
+
+        return rules;
+    }
+
+    public void updateRules(Project project) {
+        var rules = getRulesWithDefault(project);
+
         var simpleProject = SimpleProject.builder()
             .name(project.getMetadata().getName())
             .rootPath(project.getSpec().getDirectory())
