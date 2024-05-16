@@ -88,7 +88,29 @@ public class PageProjectEndpoint implements CustomEndpoint {
                 )
                 .response(responseBuilder().implementation(String.class))
             )
+            .GET("/projects/{name}/file-content", this::getFileContent, builder -> builder
+                .operationId("GetFileContent")
+                .tag(tag)
+                .parameter(parameterBuilder()
+                    .in(ParameterIn.PATH)
+                    .name("name")
+                    .required(true)
+                )
+                .parameter(parameterBuilder()
+                    .in(ParameterIn.QUERY)
+                    .required(false)
+                    .name("path")
+                )
+                .response(responseBuilder().implementation(String.class))
+            )
             .build();
+    }
+
+    private Mono<ServerResponse> getFileContent(ServerRequest request) {
+        final var projectName = request.pathVariable("name");
+        final var path = request.queryParam("path").orElse("/");
+        return pageProjectService.readFileContent(projectName, path)
+            .flatMap(content -> ServerResponse.ok().bodyValue(content));
     }
 
     private Mono<ServerResponse> listFiles(ServerRequest serverRequest) {

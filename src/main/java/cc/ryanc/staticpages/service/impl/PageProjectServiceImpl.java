@@ -7,6 +7,7 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 import cc.ryanc.staticpages.extensions.Project;
 import cc.ryanc.staticpages.model.ProjectFile;
 import cc.ryanc.staticpages.model.UploadContext;
+import cc.ryanc.staticpages.service.PageFileManager;
 import cc.ryanc.staticpages.service.PageProjectService;
 import cc.ryanc.staticpages.utils.FileUtils;
 import java.io.File;
@@ -35,6 +36,7 @@ import run.halo.app.infra.BackupRootGetter;
 public class PageProjectServiceImpl implements PageProjectService {
     private final ReactiveExtensionClient client;
     private final BackupRootGetter backupRootGetter;
+    private final PageFileManager pageFileManager;
 
     private static String getType(File file) {
         String name = file.getName();
@@ -115,6 +117,13 @@ public class PageProjectServiceImpl implements PageProjectService {
         return client.get(Project.class, name)
             .map(project -> extractProjectFilePath(project, directoryPath))
             .flatMapMany(PageProjectServiceImpl::doListFiles);
+    }
+
+    @Override
+    public Mono<String> readFileContent(String projectName, String path) {
+        return client.get(Project.class, projectName)
+            .map(project -> extractProjectFilePath(project, path))
+            .flatMap(pageFileManager::readString);
     }
 
     Path extractProjectFilePath(Project project, String extractPath) {
