@@ -3,6 +3,7 @@ package cc.ryanc.staticpages.endpoint;
 import cc.ryanc.staticpages.service.ProjectRewriteRules;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.server.PathContainer;
@@ -11,6 +12,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.resource.NoResourceFoundException;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilterChain;
+import org.springframework.web.util.pattern.PathPattern;
+import org.springframework.web.util.pattern.PathPatternParser;
 import reactor.core.publisher.Mono;
 import run.halo.app.security.AdditionalWebFilter;
 
@@ -38,7 +41,7 @@ public class RewriteOnNotFoundFilter implements AdditionalWebFilter {
         var requestPath = normalizePath(exchange.getRequest().getPath().pathWithinApplication());
 
         // Collect all possible rewrites into a list
-        var rewrites = rewriteRules.getRewriteRules().entrySet().stream()
+        var rewrites = getRulesWithDefault(exchange).entrySet().stream()
             .filter(entry -> entry.getKey().matches(requestPath))
             .map(Map.Entry::getValue)
             .toList();
@@ -74,6 +77,15 @@ public class RewriteOnNotFoundFilter implements AdditionalWebFilter {
             }
         }
         return false;
+    }
+
+    Map<PathPattern, String> getRulesWithDefault(ServerWebExchange exchange) {
+        var requestPath = exchange.getRequest().getPath().pathWithinApplication();
+        var rules = new TreeMap<>(rewriteRules.getRewriteRules());
+        var parser = PathPatternParser.defaultInstance;
+        rules.put(parser.parse(requestPath.value()), requestPath + "/index.html");
+        rules.put(parser.parse(requestPath.value() + "/"), requestPath + "/index.html");
+        return rules;
     }
 
     String ensureLeadingSlash(String path) {
