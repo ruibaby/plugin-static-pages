@@ -126,6 +126,13 @@ public class PageProjectServiceImpl implements PageProjectService {
             .flatMap(pageFileManager::readString);
     }
 
+    @Override
+    public Mono<Void> writeContent(String projectName, String path, String content) {
+        return client.get(Project.class, projectName)
+            .map(project -> extractProjectFilePath(project, path))
+            .flatMap(filePath -> pageFileManager.writeString(filePath, content));
+    }
+
     Path extractProjectFilePath(Project project, String extractPath) {
         var segments = pathSegments(extractPath);
         return concatPath(determineProjectPath(project.getSpec().getDirectory()), segments);

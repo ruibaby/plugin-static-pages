@@ -19,6 +19,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.nio.file.Path;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.webflux.core.fn.SpringdocRouteBuilder;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.http.codec.multipart.FormFieldPart;
@@ -103,7 +104,35 @@ public class PageProjectEndpoint implements CustomEndpoint {
                 )
                 .response(responseBuilder().implementation(String.class))
             )
+            .PUT("/projects/{name}/file-content", this::writeContentToFile, builder -> builder
+                .operationId("WriteContentToFile")
+                .tag(tag)
+                .parameter(parameterBuilder()
+                    .in(ParameterIn.PATH)
+                    .name("name")
+                    .required(true)
+                )
+                .parameter(parameterBuilder()
+                    .in(ParameterIn.QUERY)
+                    .required(false)
+                    .name("path")
+                )
+                .requestBody(requestBodyBuilder()
+                    .implementation(WriteContentRequest.class)
+                )
+                .response(responseBuilder()
+                    .responseCode(String.valueOf(HttpStatus.NO_CONTENT.value())))
+            )
             .build();
+    }
+
+    private Mono<ServerResponse> writeContentToFile(ServerRequest request) {
+        final var projectName = request.pathVariable("name");
+        final var path = request.queryParam("path").orElse("/");
+        return request.bodyToMono(WriteContentRequest.class)
+            .switchIfEmpty(Mono.error(new ServerWebInputException("Required body is missing.")))
+            .flatMap(req -> pageProjectService.writeContent(projectName, path, req.content()))
+            .then(ServerResponse.noContent().build());
     }
 
     private Mono<ServerResponse> getFileContent(ServerRequest request) {
@@ -123,6 +152,9 @@ public class PageProjectEndpoint implements CustomEndpoint {
     @Override
     public GroupVersion groupVersion() {
         return GroupVersion.parseAPIVersion("console.api.staticpage.halo.run/v1alpha1");
+    }
+
+    public record WriteContentRequest(@Schema(requiredMode = REQUIRED) String content) {
     }
 
     public record UploadRequest(MultiValueMap<String, Part> formData) {

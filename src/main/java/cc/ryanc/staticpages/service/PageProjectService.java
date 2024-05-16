@@ -13,4 +13,6 @@ public interface PageProjectService {
     Flux<ProjectFile> listFiles(String projectName, String directoryPath);
 
     Mono<String> readFileContent(String projectName, String path);
+
+    Mono<Void> writeContent(String projectName, String path, String content);
 }
