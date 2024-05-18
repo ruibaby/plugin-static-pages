@@ -16,6 +16,8 @@ const emit = defineEmits<{
 const modal = ref();
 
 const activeTab = ref("file");
+
+const autoUnzip = ref(false);
 </script>
 
 <template>
@@ -29,10 +31,17 @@ const activeTab = ref("file");
   >
     <VTabs v-model:active-id="activeTab" type="outline">
       <VTabItem id="file" label="选择文件上传">
+        <FormKit
+          v-model="autoUnzip"
+          type="checkbox"
+          label="自动解压"
+          help="建议仅上传 zip 时开启"
+        ></FormKit>
         <UppyUpload
           :endpoint="`/apis/console.api.staticpage.halo.run/v1alpha1/projects/${project.metadata.name}/upload`"
           :meta="{
             dir: path,
+            unzip: autoUnzip ? 'true' : 'false',
           }"
           width="100%"
           :allowed-meta-fields="['unzip', 'dir']"
