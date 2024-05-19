@@ -1,8 +1,9 @@
-import type { Secret } from ".";
+import type { ProjectRewrite } from ".";
 
 export interface ProjectFormState {
   title: string;
+  icon?: string;
   description?: string;
   directory: string;
-  secret: Secret;
+  rewrites?: ProjectRewrite[];
 }

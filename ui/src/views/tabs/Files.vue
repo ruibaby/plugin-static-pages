@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { Project, ProjectFile } from "@/types";
 import { apiClient } from "@/utils/api-client";
-import { useQuery } from "@tanstack/vue-query";
+import { useQuery, useQueryClient } from "@tanstack/vue-query";
 import { computed, ref, toRefs } from "vue";
 import prettyBytes from "pretty-bytes";
 import { formatDatetime, relativeTimeTo } from "@/utils/date";
@@ -9,6 +9,12 @@ import FileIcon from "@/components/FileIcon.vue";
 import TablerHome from "~icons/tabler/home";
 import TablerArrowBackUp from "~icons/tabler/arrow-back-up";
 import { useRouteQuery } from "@vueuse/router";
+import { Dialog, VButton, VSpace } from "@halo-dev/components";
+import { normalizePath } from "@/utils/path";
+import TablerExternalLink from "~icons/tabler/external-link";
+import FileUploadModal from "@/components/FileUploadModal.vue";
+
+const queryClient = useQueryClient();
 
 const props = withDefaults(defineProps<{ project: Project }>(), {});
 
@@ -64,43 +70,134 @@ const breadcrumbItems = computed(() => {
     };
   });
 });
+
+function handleOpenFile(file: ProjectFile) {
+  window.open(
+    normalizePath(
+      "/",
+      project.value.spec.directory,
+      selectedDir.value,
+      file.name
+    ),
+    "_blank"
+  );
+}
+
+function handleDeleteFile(file: ProjectFile) {
+  Dialog.warning({
+    title: `删除文件${file.directory ? "夹" : ""}：${file.name}`,
+    description: `确定要删除文件${file.directory ? "夹" : ""}：${
+      file.name
+    }吗？此操作无法恢复。`,
+    async onConfirm() {
+      const path = normalizePath(selectedDir.value, file.name);
+
+      await apiClient.delete(
+        `/apis/console.api.staticpage.halo.run/v1alpha1/projects/${props.project.metadata.name}/files?path=${path}`
+      );
+
+      queryClient.invalidateQueries([
+        "plugin-static-pages:files",
+        project.value.metadata.name,
+        selectedDir.value,
+      ]);
+    },
+  });
+}
+
+function handleCleanup() {
+  Dialog.warning({
+    title: "清空项目文件",
+    description: "确定要清空所有的项目文件吗？此操作无法恢复。",
+    async onConfirm() {
+      await apiClient.delete(
+        `/apis/console.api.staticpage.halo.run/v1alpha1/projects/${props.project.metadata.name}/files?path=/`
+      );
+
+      queryClient.invalidateQueries([
+        "plugin-static-pages:files",
+        project.value.metadata.name,
+        selectedDir.value,
+      ]);
+    },
+  });
+}
+
+// Upload
+const uploadModalVisible = ref(false);
+
+function onUploadModalClose() {
+  uploadModalVisible.value = false;
+  queryClient.invalidateQueries([
+    "plugin-static-pages:files",
+    project.value.metadata.name,
+    selectedDir.value,
+  ]);
+}
 </script>
 
 <template>
-  <nav class="sp-flex sp-p-2.5" aria-label="Breadcrumb">
-    <ol role="list" class="sp-flex sp-items-center sp-space-x-2">
-      <li>
-        <div>
-          <span
-            @click="selectedDir = '/'"
-            class="sp-text-gray-400 hover:sp-text-gray-500 sp-cursor-pointer"
-          >
-            <TablerHome class="sp-h-5 sp-w-5 sp-flex-shrink-0" />
-          </span>
-        </div>
-      </li>
-      <li v-for="item in breadcrumbItems">
-        <div class="sp-flex sp-items-center">
-          <svg
-            class="sp-h-5 sp-w-5 sp-flex-shrink-0 sp-text-gray-300"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-            aria-hidden="true"
-          >
-            <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
-          </svg>
-          <span
-            class="sp-ml-2 sp-cursor-pointer sp-text-sm sp-font-medium sp-text-gray-500 hover:sp-text-gray-700"
-            @click="selectedDir = item.path"
-          >
-            {{ item.name }}
-          </span>
-        </div>
-      </li>
-    </ol>
-  </nav>
+  <FileUploadModal
+    v-if="uploadModalVisible"
+    :project="project"
+    :path="selectedDir"
+    @close="onUploadModalClose"
+  />
 
-  <div class="sp-mt-5 sp-flow-root sp-overflow-hidden rounded-b-base">
+  <div class="sp-flex sp-px-4 sp-py-4 sp-justify-between sp-items-center">
+    <nav aria-label="Breadcrumb">
+      <ol role="list" class="sp-flex sp-items-center sp-space-x-2">
+        <li>
+          <div>
+            <span
+              class="sp-text-gray-400 hover:sp-text-gray-500 sp-cursor-pointer"
+              @click="selectedDir = '/'"
+            >
+              <TablerHome class="sp-h-5 sp-w-5 sp-flex-shrink-0" />
+            </span>
+          </div>
+        </li>
+        <li v-for="(item, index) in breadcrumbItems" :key="index">
+          <div class="sp-flex sp-items-center">
+            <svg
+              class="sp-h-5 sp-w-5 sp-flex-shrink-0 sp-text-gray-300"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              aria-hidden="true"
+            >
+              <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
+            </svg>
+            <span
+              class="sp-ml-2 sp-cursor-pointer sp-text-sm sp-font-medium sp-text-gray-500 hover:sp-text-gray-700"
+              @click="selectedDir = item.path"
+            >
+              {{ item.name }}
+            </span>
+          </div>
+        </li>
+      </ol>
+    </nav>
+
+    <VSpace>
+      <VButton type="secondary" @click="uploadModalVisible = true">
+        上传
+      </VButton>
+      <VButton
+        type="default"
+        @click="
+          $router.push({
+            name: 'StaticPageFilesEditor',
+            params: { name: project.metadata.name },
+          })
+        "
+      >
+        编辑
+      </VButton>
+      <VButton type="danger" @click="handleCleanup">清空</VButton>
+    </VSpace>
+  </div>
+
+  <div class="sp-mt-3 sp-flow-root sp-overflow-hidden rounded-b-base">
     <div class="sp-overflow-x-auto">
       <div class="sp-inline-block sp-min-w-full sp-align-middle">
         <table class="sp-min-w-full sp-divide-y sp-divide-gray-300">
@@ -108,25 +205,25 @@ const breadcrumbItems = computed(() => {
             <tr>
               <th
                 scope="col"
-                class="sp-py-3.5 sp-pl-4 sp-pr-3 sp-text-left sp-text-sm sp-font-semibold sp-text-gray-900 sm:sp-pl-3"
+                class="sp-px-4 sp-py-3.5 sp-text-left sp-text-sm sp-font-semibold sp-text-gray-900"
               >
                 文件名
               </th>
               <th
                 scope="col"
-                class="sp-px-3 sp-py-3.5 sp-text-left sp-text-sm sp-font-semibold sp-text-gray-900"
+                class="sp-px-4 sp-py-3.5 sp-text-left sp-text-sm sp-font-semibold sp-text-gray-900"
               >
                 类型
               </th>
               <th
                 scope="col"
-                class="sp-px-3 sp-py-3.5 sp-text-left sp-text-sm sp-font-semibold sp-text-gray-900"
+                class="sp-px-4 sp-py-3.5 sp-text-left sp-text-sm sp-font-semibold sp-text-gray-900"
               >
                 大小
               </th>
               <th
                 scope="col"
-                class="sp-px-3 sp-py-3.5 sp-text-left sp-text-sm sp-font-semibold sp-text-gray-900"
+                class="sp-px-4 sp-py-3.5 sp-text-left sp-text-sm sp-font-semibold sp-text-gray-900"
               >
                 修改时间
               </th>
@@ -143,7 +240,7 @@ const breadcrumbItems = computed(() => {
               @click="handleBack()"
             >
               <td
-                class="sp-whitespace-nowrap sp-py-4 sp-pl-4 sp-pr-3 sp-text-sm sp-font-medium sp-text-gray-900 sm:sp-pl-3"
+                class="sp-whitespace-nowrap sp-py-4 sp-px-4 sp-text-sm sp-font-medium sp-text-gray-900"
               >
                 <div class="sp-inline-flex sp-items-center sp-gap-2">
                   <TablerArrowBackUp
@@ -153,17 +250,17 @@ const breadcrumbItems = computed(() => {
                 </div>
               </td>
               <td
-                class="sp-whitespace-nowrap sp-px-3 sp-py-4 sp-text-sm sp-text-gray-500"
+                class="sp-whitespace-nowrap sp-px-4 sp-py-4 sp-text-sm sp-text-gray-500"
               >
                 --
               </td>
               <td
-                class="sp-whitespace-nowrap sp-px-3 sp-py-4 sp-text-sm sp-text-gray-500"
+                class="sp-whitespace-nowrap sp-px-4 sp-py-4 sp-text-sm sp-text-gray-500"
               >
                 --
               </td>
               <td
-                class="sp-whitespace-nowrap sp-px-3 sp-py-4 sp-text-sm sp-text-gray-500 sp-cursor-pointer"
+                class="sp-whitespace-nowrap sp-px-4 sp-py-4 sp-text-sm sp-text-gray-500 sp-cursor-pointer"
               >
                 --
               </td>
@@ -173,31 +270,37 @@ const breadcrumbItems = computed(() => {
             </tr>
             <tr
               v-for="file in data"
+              :key="file.path"
               class="even:sp-bg-gray-50 hover:sp-bg-blue-50 sp-cursor-pointer sp-group"
               @click="handleClickRow(file)"
             >
               <td
-                class="sp-whitespace-nowrap sp-py-4 sp-pl-4 sp-pr-3 sp-text-sm sp-font-medium sp-text-gray-900 sm:sp-pl-3"
+                class="sp-whitespace-nowrap sp-py-4 sp-px-4 sp-text-sm sp-font-medium sp-text-gray-900"
               >
                 <div class="sp-inline-flex sp-items-center sp-gap-2">
                   <FileIcon :type="file.type" />
                   <span class="group-hover:sp-text-blue-600">
                     {{ file.name }}
                   </span>
+                  <TablerExternalLink
+                    v-if="!file.directory"
+                    class="sp-invisible group-hover:sp-visible sp-text-gray-600 hover:sp-text-gray-900"
+                    @click.stop="handleOpenFile(file)"
+                  />
                 </div>
               </td>
               <td
-                class="sp-whitespace-nowrap sp-px-3 sp-py-4 sp-text-sm sp-text-gray-500"
+                class="sp-whitespace-nowrap sp-px-4 sp-py-4 sp-text-sm sp-text-gray-500"
               >
                 {{ file.type }}
               </td>
               <td
-                class="sp-whitespace-nowrap sp-px-3 sp-py-4 sp-text-sm sp-text-gray-500"
+                class="sp-whitespace-nowrap sp-px-4 sp-py-4 sp-text-sm sp-text-gray-500"
               >
                 {{ prettyBytes(file.size) }}
               </td>
               <td
-                class="sp-whitespace-nowrap sp-px-3 sp-py-4 sp-text-sm sp-text-gray-500 sp-cursor-pointer"
+                class="sp-whitespace-nowrap sp-px-4 sp-py-4 sp-text-sm sp-text-gray-500 sp-cursor-pointer"
               >
                 <span v-tooltip="formatDatetime(file.lastModifiedTime)">
                   {{ relativeTimeTo(file.lastModifiedTime) }}
@@ -206,9 +309,12 @@ const breadcrumbItems = computed(() => {
               <td
                 class="sp-relative sp-whitespace-nowrap sp-py-4 sp-pl-3 sp-pr-4 sp-text-right sp-text-sm sp-font-medium sm:sp-pr-3"
               >
-                <a href="#" class="sp-text-indigo-600 hover:sp-text-indigo-900">
-                  编辑
-                </a>
+                <span
+                  class="sp-text-red-500 hover:sp-text-red-400 group-hover:sp-visible sp-invisible"
+                  @click.stop="handleDeleteFile(file)"
+                >
+                  删除
+                </span>
               </td>
             </tr>
           </tbody>

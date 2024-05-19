@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useQuery } from "@tanstack/vue-query";
 import { apiClient } from "@/utils/api-client";
-import { VPageHeader, VLoading, IconAddCircle } from "@halo-dev/components";
+import { IconAddCircle, VLoading, VPageHeader } from "@halo-dev/components";
 import CarbonWebServicesContainer from "~icons/carbon/web-services-container";
 import type { ListResponse, Project } from "@/types";
 import ProjectCard from "@/components/ProjectCard.vue";
@@ -15,6 +15,13 @@ const { data, isLoading } = useQuery({
       "/apis/staticpage.halo.run/v1alpha1/projects"
     );
     return data;
+  },
+  refetchInterval(data) {
+    const hasDeletingData = data?.items.some(
+      (project) => !!project.metadata.deletionTimestamp
+    );
+
+    return hasDeletingData ? 1000 : false;
   },
 });
 
@@ -37,7 +44,7 @@ const creationModalVisible = ref(false);
     <VLoading v-if="isLoading" />
     <Transition v-else appear name="fade">
       <div
-        class="sp-grid sp-grid-cols-1 sp-gap-3 sm:sp-grid-cols-2 md:sp-grid-cols-3 xl:sp-grid-cols-5"
+        class="sp-grid sp-grid-cols-1 sp-gap-3 sm:sp-grid-cols-2 lg:sp-grid-cols-3 xl:sp-grid-cols-4 2xl:sp-grid-cols-5"
       >
         <ProjectCard
           v-for="project in data?.items"

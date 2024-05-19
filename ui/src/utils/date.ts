@@ -1,19 +1,22 @@
-import dayjs from 'dayjs'
-import 'dayjs/locale/zh-cn'
-import timezone from 'dayjs/plugin/timezone'
-import utc from 'dayjs/plugin/utc'
-import relativeTime from 'dayjs/plugin/relativeTime'
+import dayjs from "dayjs";
+import "dayjs/locale/zh-cn";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
+import relativeTime from "dayjs/plugin/relativeTime";
 
-dayjs.extend(timezone)
-dayjs.extend(utc)
-dayjs.extend(relativeTime)
-dayjs.locale('zh-cn')
+dayjs.extend(timezone);
+dayjs.extend(utc);
+dayjs.extend(relativeTime);
+dayjs.locale("zh-cn");
 
-export function formatDatetime(date: string | Date | undefined | null, tz?: string): string {
+export function formatDatetime(
+  date: string | Date | undefined | null,
+  tz?: string
+): string {
   if (!date) {
-    return ''
+    return "";
   }
-  return dayjs(date).tz(tz).format('YYYY-MM-DD HH:mm')
+  return dayjs(date).tz(tz).format("YYYY-MM-DD HH:mm");
 }
 
 /**
@@ -29,17 +32,17 @@ export function formatDatetime(date: string | Date | undefined | null, tz?: stri
  */
 export function relativeTimeTo(date: string | Date | undefined | null) {
   if (!date) {
-    return
+    return;
   }
 
-  const currentDate = new Date()
-  const inputDate = new Date(date)
+  const currentDate = new Date();
+  const inputDate = new Date(date);
 
-  const oneYearInMilliseconds = 365 * 24 * 60 * 60 * 1000
+  const oneYearInMilliseconds = 365 * 24 * 60 * 60 * 1000;
 
   if (currentDate.getTime() - inputDate.getTime() > oneYearInMilliseconds) {
-    return formatDatetime(date)
+    return formatDatetime(date);
   }
 
-  return dayjs().to(dayjs(date))
+  return dayjs().to(dayjs(date));
 }
