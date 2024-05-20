@@ -220,7 +220,8 @@ function onContextMenu(
         <div
           class="sp-group sp-flex sp-w-full sp-cursor-pointer sp-items-center sp-justify-between sp-gap-2 sp-rounded sp-p-1 hover:sp-bg-gray-100"
           :class="{
-            'sp-bg-gray-100': false,
+            'sp-bg-gray-100':
+              selectedFilePath === normalizePath('/', getFileFullPath(stat)),
           }"
           @click="handleClickDocTree(node, stat)"
           @contextmenu="onContextMenu($event, node, stat)"

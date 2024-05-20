@@ -79,7 +79,7 @@ const editModalVisible = ref(false);
         <VButton size="sm" @click="handleOpen"> 访问</VButton>
         <VButton @click="editModalVisible = true">
           <template #icon>
-            <IconSettings class="sp-h-full sp-w-full" />
+            <IconSettings class="sp-size-full" />
           </template>
           设置
         </VButton>

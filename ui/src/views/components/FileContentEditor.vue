@@ -1,9 +1,12 @@
 <script lang="ts" setup>
+import CodeEditor from "@/components/CodeEditor.vue";
+import HTMLVisualEditor from "@/components/HTMLVisualEditor.vue";
 import type { Project } from "@/types";
+import { apiClient } from "@/utils/api-client";
 import { normalizePath } from "@/utils/path";
-import { VButton, VSpace } from "@halo-dev/components";
-import { useLocalStorage } from "@vueuse/core";
-import { computed } from "vue";
+import { Toast, VButton, VSpace } from "@halo-dev/components";
+import { useEventListener, useLocalStorage } from "@vueuse/core";
+import { computed, onMounted, ref, watch } from "vue";
 import RiMenuFoldLine from "~icons/ri/menu-fold-line";
 import RiMenuUnfoldLine from "~icons/ri/menu-unfold-line";
 
@@ -16,6 +19,7 @@ const SUPPORTED_EDIT_FILES = [
   ".json",
   ".svg",
   ".xml",
+  ".txt",
 ];
 
 const IMAGE_FILES = [".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg"];
@@ -46,6 +50,68 @@ const fullPath = computed(() => {
   }
   return normalizePath("/", props.project.spec.directory, props.path);
 });
+
+// File Content
+const content = ref("");
+const processing = ref(false);
+
+async function handleFetchContent() {
+  if (!SUPPORTED_EDIT_FILES.some((ext) => props.path?.endsWith(ext))) {
+    return;
+  }
+
+  const { data } = await apiClient.get(
+    `/apis/console.api.staticpage.halo.run/v1alpha1/projects/${props.project.metadata.name}/file-content?path=${props.path}`
+  );
+  content.value = data;
+}
+
+async function handleSaveContent() {
+  if (!props.path) {
+    return;
+  }
+
+  try {
+    processing.value = true;
+
+    await apiClient.put(
+      `/apis/console.api.staticpage.halo.run/v1alpha1/projects/${props.project.metadata.name}/file-content?path=${props.path}`,
+      { content: content.value }
+    );
+
+    Toast.success("保存成功");
+    handleFetchContent();
+  } catch (error) {
+    Toast.error("保存失败");
+  } finally {
+    processing.value = false;
+  }
+}
+
+onMounted(() => {
+  handleFetchContent();
+});
+
+watch(
+  () => props.path,
+  (value) => {
+    if (value) {
+      handleFetchContent();
+    }
+  }
+);
+
+useEventListener("keydown", (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key === "s") {
+    e.preventDefault();
+    handleSaveContent();
+  }
+});
+
+const enableVisualEditor = useLocalStorage(
+  "plugin-static-pages:enable-visual-editor",
+  false
+);
 </script>
 
 <template>
@@ -66,12 +132,24 @@ const fullPath = computed(() => {
       </span>
     </VSpace>
     <VSpace v-if="path && isEditableFile">
-      <VButton type="secondary"> 保存</VButton>
+      <VButton
+        v-if="path.endsWith('.html')"
+        @click="enableVisualEditor = !enableVisualEditor"
+      >
+        {{ enableVisualEditor ? "代码编辑" : "可视化编辑（实验性）" }}
+      </VButton>
+      <VButton
+        :loading="processing"
+        type="secondary"
+        @click="handleSaveContent"
+      >
+        保存
+      </VButton>
     </VSpace>
   </div>
   <div
     v-if="!path"
-    class="sp-flex sp-h-full sp-w-full sp-items-center sp-justify-center"
+    class="sp-flex sp-size-full sp-items-center sp-justify-center"
   >
     <span class="sp-text-sm sp-text-gray-900"> 当前未选择文件 </span>
   </div>
@@ -80,15 +158,16 @@ const fullPath = computed(() => {
   </div>
   <div
     v-else-if="isEditableFile"
-    class="sp-h-full sp-w-full"
-    style="height: calc(100vh - 11rem)"
+    style="height: calc(100vh - 8.5rem)"
+    class="sp-size-full sp-overflow-auto"
   >
-    {{ path }}
+    <HTMLVisualEditor
+      v-if="enableVisualEditor && path.endsWith('.html')"
+      v-model="content"
+    />
+    <CodeEditor v-else v-model="content" :path="path" />
   </div>
-  <div
-    v-else
-    class="sp-flex sp-h-full sp-w-full sp-items-center sp-justify-center"
-  >
+  <div v-else class="sp-flex sp-size-full sp-items-center sp-justify-center">
     <span class="sp-text-sm sp-text-gray-900"> 当前文件不支持编辑和预览 </span>
   </div>
 </template>
