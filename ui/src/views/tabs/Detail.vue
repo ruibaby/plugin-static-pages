@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { Project } from "@/types";
-import { VDescriptionItem, VDescription } from "@halo-dev/components";
+import { VDescription, VDescriptionItem } from "@halo-dev/components";
 
 withDefaults(defineProps<{ project: Project }>(), {});
 </script>

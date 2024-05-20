@@ -86,8 +86,10 @@ function handleDelete() {
     <ProjectForm
       :form-state="{
         title: project.spec.title,
+        icon: project.spec.icon,
         description: project.spec.description,
         directory: project.spec.directory,
+        rewrites: project.spec.rewrites || [],
       }"
       @submit="onSubmit"
     />

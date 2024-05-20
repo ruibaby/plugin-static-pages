@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, markRaw, type Component, type Raw } from "vue";
+import { type Component, computed, markRaw, type Raw } from "vue";
 import VscodeIconsFileTypeHtml from "~icons/vscode-icons/file-type-html";
 import VscodeIconsFileTypeCss from "~icons/vscode-icons/file-type-css";
 import VscodeIconsDefaultFile from "~icons/vscode-icons/default-file";
@@ -17,6 +17,11 @@ const iconMap: Record<string, Raw<Component>> = {
   css: markRaw(VscodeIconsFileTypeCss),
   directory: markRaw(VscodeIconsDefaultFolder),
   png: markRaw(VscodeIconsFileTypeImage),
+  jpg: markRaw(VscodeIconsFileTypeImage),
+  jpeg: markRaw(VscodeIconsFileTypeImage),
+  webp: markRaw(VscodeIconsFileTypeImage),
+  gif: markRaw(VscodeIconsFileTypeImage),
+  ico: markRaw(VscodeIconsFileTypeImage),
   xml: markRaw(VscodeIconsFileTypeXml),
   js: markRaw(VscodeIconsFileTypeJs),
   svg: markRaw(VscodeIconsFileTypeSvg),

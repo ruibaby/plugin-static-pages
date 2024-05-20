@@ -4,6 +4,7 @@ import { markRaw } from "vue";
 import CarbonWebServicesContainer from "~icons/carbon/web-services-container";
 import "./styles/tailwind.css";
 import ProjectDetail from "./views/ProjectDetail.vue";
+import FilesEditor from "./views/FilesEditor.vue";
 
 export default definePlugin({
   components: {},
@@ -35,6 +36,19 @@ export default definePlugin({
         meta: {
           title: "静态网页详情",
           searchable: false,
+        },
+      },
+    },
+    {
+      parentName: "ToolsRoot",
+      route: {
+        path: "static-pages/:name/files-editor",
+        name: "StaticPageFilesEditor",
+        component: FilesEditor,
+        meta: {
+          title: "文件编辑",
+          searchable: false,
+          hideFooter: true,
         },
       },
     },

@@ -12,6 +12,8 @@ public interface PageProjectService {
 
     Flux<ProjectFile> listFiles(String projectName, String directoryPath);
 
+    Mono<Boolean> deleteFile(String projectName, String path);
+
     Mono<String> readFileContent(String projectName, String path);
 
     Mono<Void> writeContent(String projectName, String path, String content);

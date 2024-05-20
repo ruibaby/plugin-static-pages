@@ -9,8 +9,10 @@ export interface Project {
 
 export interface Spec {
   title: string;
+  icon?: string;
   description?: string;
   directory: string;
+  rewrites?: ProjectRewrite[];
 }
 
 export interface ListResponse<T> {
@@ -34,4 +36,9 @@ export interface ProjectFile {
   canRead: boolean;
   canWrite: boolean;
   directory: boolean;
+}
+
+export interface ProjectRewrite {
+  source: string;
+  target: string;
 }
