@@ -23,7 +23,7 @@
 
 ## 安装
 
-下载地址：<https://ryanc.cc/upload/xxx.jar>
+下载地址：<https://ryanc.cc/upload/tmp/plugin-static-pages-1.0.0-alpha.1.jar>
 
 如上所述，当前为需求验证版本，所以暂未开源。
 
