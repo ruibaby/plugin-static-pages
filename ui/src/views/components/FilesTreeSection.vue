@@ -21,6 +21,7 @@ import FileIcon from "@/components/FileIcon.vue";
 import { normalizePath } from "@/utils/path";
 import ContextMenu from "@imengyu/vue3-context-menu";
 import "@imengyu/vue3-context-menu/lib/vue3-context-menu.css";
+import FileCreationModal from "./FileCreationModal.vue";
 
 const props = withDefaults(defineProps<{ project: Project }>(), {});
 
@@ -122,6 +123,20 @@ function onContextMenu(
     zIndex: 999,
     items: [
       {
+        label: "创建文件夹",
+        icon: h(RiFolderAddLine),
+        onClick: () => {
+          handleOpenFileCreationModal(true, getFileFullPath(stat));
+        },
+      },
+      {
+        label: "创建文件",
+        icon: h(RiFileAddLine),
+        onClick: () => {
+          handleOpenFileCreationModal(false, getFileFullPath(stat));
+        },
+      },
+      {
         label: "访问",
         icon: h(IconExternalLinkLine),
         onClick: () => {
@@ -164,21 +179,43 @@ function onContextMenu(
     ],
   });
 }
+
+// File creation
+
+const fileCreationModalVisible = ref(false);
+const isCreateDir = ref(false);
+const creationBaseDir = ref("/");
+
+function handleOpenFileCreationModal(isDir: boolean, baseDir: string) {
+  isCreateDir.value = isDir;
+  creationBaseDir.value = baseDir;
+  fileCreationModalVisible.value = true;
+}
 </script>
 
 <template>
+  <FileCreationModal
+    v-if="fileCreationModalVisible"
+    :is-dir="isCreateDir"
+    :base-dir="creationBaseDir"
+    :project="project"
+    @close="fileCreationModalVisible = false"
+  />
+
   <div
     class="sp-p-1 sp-flex sp-items-center sp-justify-end sp-gap-2 sp-rounded sp-bg-gray-100"
   >
     <div
       v-tooltip="'添加文件夹'"
       class="sp-cursor-pointer sp-rounded-full sp-p-1.5 sp-transition-all hover:sp-bg-gray-200"
+      @click="handleOpenFileCreationModal(true, '/')"
     >
       <RiFolderAddLine class="sp-text-sm sp-text-gray-600" />
     </div>
     <div
       v-tooltip="'添加文件'"
       class="sp-cursor-pointer sp-rounded-full sp-p-1.5 sp-transition-all hover:sp-bg-gray-200"
+      @click="handleOpenFileCreationModal(false, '/')"
     >
       <RiFileAddLine class="sp-text-sm sp-text-gray-600" />
     </div>
