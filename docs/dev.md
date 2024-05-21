@@ -30,6 +30,8 @@ spec:
   secret 进行认证。
 - DELETE /apis/console.api.staticpage.halo.run/v1alpha1/projects/{name}/files?path=xxx 删除项目中的文件或目录。
 - GET /apis/console.api.staticpage.halo.run/v1alpha1/projects/{name}/files?path=xxx 获取项目文件列表。
+- POST /apis/console.api.staticpage.halo.run/v1alpha1/projects/{name}/file, body: `{ "path": "a/b/c", dir: true }`
+  创建项目文件或目录。
 - GET /apis/console.api.halo.run/v1alpha1/projects/{name}/file-content?path=xxx 读取静态资源文件内容。
 - PUT /apis/console.api.staticpage.halo.run/v1alpha1/projects/{name}/file-content?path=xxx.index,
   body: `{ "content": "hello" }` 更新静态资源文件内容。

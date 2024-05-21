@@ -144,6 +144,13 @@ public class PageProjectServiceImpl implements PageProjectService {
             .flatMap(filePath -> pageFileManager.writeString(filePath, content));
     }
 
+    @Override
+    public Mono<Path> createFile(String projectName, String path, boolean dir) {
+        return client.get(Project.class, projectName)
+            .map(project -> extractProjectFilePath(project, path))
+            .flatMap(filePath -> pageFileManager.createFile(filePath, dir).thenReturn(filePath));
+    }
+
     Path extractProjectFilePath(Project project, String extractPath) {
         var segments = pathSegments(extractPath);
         return concatPath(determineProjectPath(project.getSpec().getDirectory()), segments);

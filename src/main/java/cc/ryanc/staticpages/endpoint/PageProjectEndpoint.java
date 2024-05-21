@@ -144,7 +144,28 @@ public class PageProjectEndpoint implements CustomEndpoint {
                 .response(responseBuilder()
                     .responseCode(String.valueOf(HttpStatus.NO_CONTENT.value())))
             )
+            .POST("/projects/{name}/file", this::createFile, builder -> builder
+                .operationId("CreateFileOrDirectory")
+                .tag(tag)
+                .parameter(parameterBuilder()
+                    .in(ParameterIn.PATH)
+                    .name("name")
+                    .required(true)
+                )
+                .requestBody(requestBodyBuilder()
+                    .implementation(CreateFileRequest.class)
+                )
+            )
             .build();
+    }
+
+    private Mono<ServerResponse> createFile(ServerRequest request) {
+        final var projectName = request.pathVariable("name");
+        return request.bodyToMono(CreateFileRequest.class)
+            .switchIfEmpty(Mono.error(new ServerWebInputException("Required body is missing.")))
+            .flatMap(createFile -> pageProjectService.createFile(projectName, createFile.path(),
+                createFile.isDir()))
+            .flatMap(path -> ServerResponse.ok().bodyValue(path));
     }
 
     private Mono<ServerResponse> writeContentToFile(ServerRequest request) {
@@ -173,6 +194,10 @@ public class PageProjectEndpoint implements CustomEndpoint {
     @Override
     public GroupVersion groupVersion() {
         return GroupVersion.parseAPIVersion("console.api.staticpage.halo.run/v1alpha1");
+    }
+
+    public record CreateFileRequest(@Schema(requiredMode = REQUIRED, minLength = 1) String path,
+                                    boolean isDir) {
     }
 
     public record WriteContentRequest(@Schema(requiredMode = REQUIRED) String content) {
