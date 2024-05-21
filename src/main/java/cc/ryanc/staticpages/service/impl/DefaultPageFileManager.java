@@ -5,11 +5,13 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebInputException;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
+@Slf4j
 @Component
 public class DefaultPageFileManager implements PageFileManager {
 
@@ -23,6 +25,7 @@ public class DefaultPageFileManager implements PageFileManager {
                 try {
                     return Files.readString(path, StandardCharsets.UTF_8);
                 } catch (IOException e) {
+                    log.error("Failed to read file", e);
                     throw new ServerWebInputException("此文件类型不支持读取");
                 }
             })
@@ -39,7 +42,32 @@ public class DefaultPageFileManager implements PageFileManager {
                 try {
                     Files.writeString(path, content, StandardCharsets.UTF_8);
                 } catch (IOException e) {
+                    log.error("Failed to write file", e);
                     throw new ServerWebInputException("写入文件失败, 请稍后重试");
+                }
+            })
+            .subscribeOn(Schedulers.boundedElastic())
+            .then();
+    }
+
+    @Override
+    public Mono<Void> createFile(Path filePath, boolean dir) {
+        return Mono.fromRunnable(() -> {
+                if (Files.exists(filePath)) {
+                    throw new ServerWebInputException("文件已存在");
+                }
+                try {
+                    if (!Files.exists(filePath.getParent())) {
+                        Files.createDirectories(filePath.getParent());
+                    }
+                    if (dir) {
+                        Files.createDirectory(filePath);
+                    } else {
+                        Files.createFile(filePath);
+                    }
+                } catch (IOException e) {
+                    log.error("Failed to create file", e);
+                    throw new ServerWebInputException("创建文件失败, 请稍后重试", e);
                 }
             })
             .subscribeOn(Schedulers.boundedElastic())

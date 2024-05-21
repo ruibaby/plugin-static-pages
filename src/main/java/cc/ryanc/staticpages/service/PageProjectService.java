@@ -17,4 +17,6 @@ public interface PageProjectService {
     Mono<String> readFileContent(String projectName, String path);
 
     Mono<Void> writeContent(String projectName, String path, String content);
+
+    Mono<Path> createFile(String projectName, String path, boolean dir);
 }
