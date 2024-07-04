@@ -1,5 +1,6 @@
 package cc.ryanc.staticpages.service;
 
+import cc.ryanc.staticpages.extensions.Project;
 import cc.ryanc.staticpages.model.ProjectFile;
 import cc.ryanc.staticpages.model.UploadContext;
 import java.nio.file.Path;
@@ -19,4 +20,6 @@ public interface PageProjectService {
     Mono<Void> writeContent(String projectName, String path, String content);
 
     Mono<Path> createFile(String projectName, String path, boolean dir);
+
+    Mono<Void> deleteProject(Project project);
 }

@@ -151,6 +151,17 @@ public class PageProjectServiceImpl implements PageProjectService {
             .flatMap(filePath -> pageFileManager.createFile(filePath, dir).thenReturn(filePath));
     }
 
+    @Override
+    public Mono<Void> deleteProject(Project project) {
+        Assert.notNull(project, "The project must not be null.");
+        return Mono.fromCallable(() -> {
+                var path = determineProjectPath(project.getSpec().getDirectory());
+                FileSystemUtils.deleteRecursively(path);
+                return Mono.empty();
+            })
+            .then();
+    }
+
     Path extractProjectFilePath(Project project, String extractPath) {
         var segments = pathSegments(extractPath);
         return concatPath(determineProjectPath(project.getSpec().getDirectory()), segments);
