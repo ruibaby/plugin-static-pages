@@ -1,0 +1,9 @@
+apiVersion: plugin.halo.run/v1alpha1
+kind: ExtensionDefinition
+metadata:
+  name: staticpages-rewrite-filter
+spec:
+  className: cc.ryanc.staticpages.endpoint.RewriteOnNotFoundFilter
+  extensionPointName: additional-webfilter
+  displayName: "静态页面重写过滤器"
+  description: "根据静态页面项目重写规则重写请求路径"
