@@ -1,19 +1,17 @@
 import { fileURLToPath, URL } from "url";
 
-import { defineConfig } from "vite";
-import Vue from "@vitejs/plugin-vue";
-import VueJsx from "@vitejs/plugin-vue-jsx";
-import Icons from "unplugin-icons/vite";
 import { HaloUIPluginBundlerKit } from "@halo-dev/ui-plugin-bundler-kit";
-import Markdown from "unplugin-vue-markdown/vite";
 import Shiki from "@shikijs/markdown-it";
+import Vue from "@vitejs/plugin-vue";
+import Icons from "unplugin-icons/vite";
+import Markdown from "unplugin-vue-markdown/vite";
+import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [
     Vue({
       include: [/\.vue$/, /\.md$/],
     }),
-    VueJsx(),
     Icons({ compiler: "vue3" }),
     HaloUIPluginBundlerKit(),
     Markdown({

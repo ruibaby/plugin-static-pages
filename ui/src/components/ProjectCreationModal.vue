@@ -1,11 +1,12 @@
 <script lang="ts" setup>
-import { Toast, VButton, VModal, VSpace } from "@halo-dev/components";
-import type { ProjectFormState } from "@/types/form";
-import { useMutation, useQueryClient } from "@tanstack/vue-query";
-import axios, { type AxiosResponse } from "axios";
-import ProjectForm from "./ProjectForm.vue";
 import type { Project } from "@/types";
+import type { ProjectFormState } from "@/types/form";
+import { axiosInstance } from "@halo-dev/api-client";
+import { Toast, VButton, VModal, VSpace } from "@halo-dev/components";
+import { useMutation, useQueryClient } from "@tanstack/vue-query";
+import { type AxiosResponse } from "axios";
 import { useRouter } from "vue-router";
+import ProjectForm from "./ProjectForm.vue";
 
 const router = useRouter();
 
@@ -18,7 +19,7 @@ const queryClient = useQueryClient();
 const { mutate, isLoading } = useMutation({
   mutationKey: ["create-project"],
   mutationFn: async ({ data }: { data: ProjectFormState }) => {
-    const { data: project } = await axios.post<
+    const { data: project } = await axiosInstance.post<
       Project,
       AxiosResponse<Project>,
       Project

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { Project } from "@/types";
-import { apiClient } from "@/utils/api-client";
 import { normalizePath } from "@/utils/path";
+import { axiosInstance } from "@halo-dev/api-client";
 import { Toast, VButton, VModal, VSpace } from "@halo-dev/components";
 import { useQueryClient } from "@tanstack/vue-query";
 import { ref } from "vue";
@@ -24,7 +24,7 @@ async function onSubmit({ path }: { path: string }) {
   try {
     submitting.value = true;
 
-    await apiClient.post(
+    await axiosInstance.post(
       `/apis/console.api.staticpage.halo.run/v1alpha1/projects/${props.project.metadata.name}/file`,
       {
         path: normalizePath(props.baseDir, path),

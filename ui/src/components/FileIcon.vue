@@ -1,14 +1,14 @@
 <script lang="ts" setup>
 import { type Component, computed, markRaw, type Raw } from "vue";
-import VscodeIconsFileTypeHtml from "~icons/vscode-icons/file-type-html";
-import VscodeIconsFileTypeCss from "~icons/vscode-icons/file-type-css";
 import VscodeIconsDefaultFile from "~icons/vscode-icons/default-file";
 import VscodeIconsDefaultFolder from "~icons/vscode-icons/default-folder";
+import VscodeIconsFileTypeCss from "~icons/vscode-icons/file-type-css";
+import VscodeIconsFileTypeHtml from "~icons/vscode-icons/file-type-html";
 import VscodeIconsFileTypeImage from "~icons/vscode-icons/file-type-image";
-import VscodeIconsFileTypeXml from "~icons/vscode-icons/file-type-xml";
 import VscodeIconsFileTypeJs from "~icons/vscode-icons/file-type-js";
 import VscodeIconsFileTypeSvg from "~icons/vscode-icons/file-type-svg";
 import VscodeIconsFileTypeText from "~icons/vscode-icons/file-type-text";
+import VscodeIconsFileTypeXml from "~icons/vscode-icons/file-type-xml";
 
 const props = withDefaults(defineProps<{ type: string }>(), {});
 

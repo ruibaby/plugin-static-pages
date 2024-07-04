@@ -2,8 +2,8 @@
 import CodeEditor from "@/components/CodeEditor.vue";
 import HTMLVisualEditor from "@/components/HTMLVisualEditor.vue";
 import type { Project } from "@/types";
-import { apiClient } from "@/utils/api-client";
 import { normalizePath } from "@/utils/path";
+import { axiosInstance } from "@halo-dev/api-client";
 import { Toast, VButton, VSpace } from "@halo-dev/components";
 import { useEventListener, useLocalStorage } from "@vueuse/core";
 import { computed, onMounted, ref, watch } from "vue";
@@ -60,7 +60,7 @@ async function handleFetchContent() {
     return;
   }
 
-  const { data } = await apiClient.get(
+  const { data } = await axiosInstance.get(
     `/apis/console.api.staticpage.halo.run/v1alpha1/projects/${props.project.metadata.name}/file-content?path=${props.path}`
   );
   content.value = data;
@@ -74,7 +74,7 @@ async function handleSaveContent() {
   try {
     processing.value = true;
 
-    await apiClient.put(
+    await axiosInstance.put(
       `/apis/console.api.staticpage.halo.run/v1alpha1/projects/${props.project.metadata.name}/file-content?path=${props.path}`,
       { content: content.value }
     );

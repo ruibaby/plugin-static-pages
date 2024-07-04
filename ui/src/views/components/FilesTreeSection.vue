@@ -1,6 +1,8 @@
 <script lang="ts" setup>
+import FileIcon from "@/components/FileIcon.vue";
 import type { Project, ProjectFile } from "@/types";
-import { apiClient } from "@/utils/api-client";
+import { normalizePath } from "@/utils/path";
+import { axiosInstance } from "@halo-dev/api-client";
 import {
   Dialog,
   IconDeleteBin,
@@ -8,19 +10,17 @@ import {
   IconRefreshLine,
   VLoading,
 } from "@halo-dev/components";
-import { useQuery, useQueryClient } from "@tanstack/vue-query";
 import type { Stat } from "@he-tree/tree-utils";
-import { computed, h, ref, shallowRef } from "vue";
 import { BaseTree } from "@he-tree/vue";
 import "@he-tree/vue/style/default.css";
+import ContextMenu from "@imengyu/vue3-context-menu";
+import "@imengyu/vue3-context-menu/lib/vue3-context-menu.css";
+import { useQuery, useQueryClient } from "@tanstack/vue-query";
+import { computed, h, ref, shallowRef } from "vue";
 import RiArrowDownSLine from "~icons/ri/arrow-down-s-line";
 import RiArrowRightSLine from "~icons/ri/arrow-right-s-line";
 import RiFileAddLine from "~icons/ri/file-add-line";
 import RiFolderAddLine from "~icons/ri/folder-add-line";
-import FileIcon from "@/components/FileIcon.vue";
-import { normalizePath } from "@/utils/path";
-import ContextMenu from "@imengyu/vue3-context-menu";
-import "@imengyu/vue3-context-menu/lib/vue3-context-menu.css";
 import FileCreationModal from "./FileCreationModal.vue";
 
 const props = withDefaults(defineProps<{ project: Project }>(), {});
@@ -37,7 +37,7 @@ const {
 } = useQuery({
   queryKey: ["plugin-static-pages:files", props.project.metadata.name, "/"],
   queryFn: async () => {
-    const { data } = await apiClient.get<ProjectFile[]>(
+    const { data } = await axiosInstance.get<ProjectFile[]>(
       `/apis/console.api.staticpage.halo.run/v1alpha1/projects/${props.project.metadata.name}/files?path=/`
     );
     return data
@@ -83,7 +83,7 @@ async function onNodeOpen(stat: Stat<ProjectFile>) {
     return;
   }
 
-  const { data } = await apiClient.get<ProjectFile[]>(
+  const { data } = await axiosInstance.get<ProjectFile[]>(
     `/apis/console.api.staticpage.halo.run/v1alpha1/projects/${
       props.project.metadata.name
     }/files?path=${normalizePath("/", getFileFullPath(stat))}`
@@ -165,7 +165,7 @@ function onContextMenu(
             async onConfirm() {
               const path = normalizePath("/", getFileFullPath(stat));
 
-              await apiClient.delete(
+              await axiosInstance.delete(
                 `/apis/console.api.staticpage.halo.run/v1alpha1/projects/${props.project.metadata.name}/files?path=${path}`
               );
 

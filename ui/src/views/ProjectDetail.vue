@@ -1,6 +1,7 @@
 <script lang="ts" setup>
+import ProjectEditModal from "@/components/ProjectEditModal.vue";
 import type { Project } from "@/types";
-import { apiClient } from "@/utils/api-client";
+import { axiosInstance } from "@halo-dev/api-client";
 import {
   IconSettings,
   VAvatar,
@@ -12,12 +13,11 @@ import {
   VTabbar,
 } from "@halo-dev/components";
 import { useQuery } from "@tanstack/vue-query";
+import { useRouteQuery } from "@vueuse/router";
 import { type Component, markRaw, type Raw, ref } from "vue";
 import { useRoute } from "vue-router";
 import Detail from "./tabs/Detail.vue";
 import Files from "./tabs/Files.vue";
-import { useRouteQuery } from "@vueuse/router";
-import ProjectEditModal from "@/components/ProjectEditModal.vue";
 
 interface Tab {
   id: string;
@@ -30,7 +30,7 @@ const route = useRoute();
 const { data: project, isLoading } = useQuery<Project>({
   queryKey: ["plugin-static-pages:detail", route.params.name],
   queryFn: async () => {
-    const { data } = await apiClient.get<Project>(
+    const { data } = await axiosInstance.get<Project>(
       `/apis/staticpage.halo.run/v1alpha1/projects/${route.params.name}`
     );
     return data;

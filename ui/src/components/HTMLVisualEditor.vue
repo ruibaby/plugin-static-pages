@@ -1,14 +1,14 @@
 <script lang="ts" setup>
 // grapesjs
-import "grapesjs/dist/css/grapes.min.css";
 import grapesjs, { type Editor } from "grapesjs";
+import "grapesjs/dist/css/grapes.min.css";
 
 // grapesjs plugins
-import grapesjsPresetWebpage from "grapesjs-preset-webpage";
 import grapesjsBlocksBasic from "grapesjs-blocks-basic";
+import grapesjsPresetWebpage from "grapesjs-preset-webpage";
 // @ts-ignore
-import grapesjsTabs from "grapesjs-tabs";
 import grapesjsPluginForms from "grapesjs-plugin-forms";
+import grapesjsTabs from "grapesjs-tabs";
 
 import { onMounted, onUnmounted, shallowRef, watch } from "vue";
 

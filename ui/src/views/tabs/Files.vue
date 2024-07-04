@@ -1,18 +1,18 @@
 <script lang="ts" setup>
-import type { Project, ProjectFile } from "@/types";
-import { apiClient } from "@/utils/api-client";
-import { useQuery, useQueryClient } from "@tanstack/vue-query";
-import { computed, ref, toRefs } from "vue";
-import prettyBytes from "pretty-bytes";
-import { formatDatetime, relativeTimeTo } from "@/utils/date";
 import FileIcon from "@/components/FileIcon.vue";
-import TablerHome from "~icons/tabler/home";
-import TablerArrowBackUp from "~icons/tabler/arrow-back-up";
-import { useRouteQuery } from "@vueuse/router";
-import { Dialog, VButton, VSpace } from "@halo-dev/components";
-import { normalizePath } from "@/utils/path";
-import TablerExternalLink from "~icons/tabler/external-link";
 import FileUploadModal from "@/components/FileUploadModal.vue";
+import type { Project, ProjectFile } from "@/types";
+import { formatDatetime, relativeTimeTo } from "@/utils/date";
+import { normalizePath } from "@/utils/path";
+import { axiosInstance } from "@halo-dev/api-client";
+import { Dialog, VButton, VSpace } from "@halo-dev/components";
+import { useQuery, useQueryClient } from "@tanstack/vue-query";
+import { useRouteQuery } from "@vueuse/router";
+import prettyBytes from "pretty-bytes";
+import { computed, ref, toRefs } from "vue";
+import TablerArrowBackUp from "~icons/tabler/arrow-back-up";
+import TablerExternalLink from "~icons/tabler/external-link";
+import TablerHome from "~icons/tabler/home";
 
 const queryClient = useQueryClient();
 
@@ -29,7 +29,7 @@ const { data } = useQuery({
     selectedDir,
   ],
   queryFn: async () => {
-    const { data } = await apiClient.get<ProjectFile[]>(
+    const { data } = await axiosInstance.get<ProjectFile[]>(
       `/apis/console.api.staticpage.halo.run/v1alpha1/projects/${props.project.metadata.name}/files?path=${selectedDir.value}`
     );
     return data.sort((a, b) => {
@@ -93,7 +93,7 @@ function handleDeleteFile(file: ProjectFile) {
     async onConfirm() {
       const path = normalizePath(selectedDir.value, file.name);
 
-      await apiClient.delete(
+      await axiosInstance.delete(
         `/apis/console.api.staticpage.halo.run/v1alpha1/projects/${props.project.metadata.name}/files?path=${path}`
       );
 
@@ -112,7 +112,7 @@ function handleCleanup() {
     description: "确定要清空所有的项目文件吗？此操作无法恢复。",
     confirmType: "danger",
     async onConfirm() {
-      await apiClient.delete(
+      await axiosInstance.delete(
         `/apis/console.api.staticpage.halo.run/v1alpha1/projects/${props.project.metadata.name}/files?path=/`
       );
 

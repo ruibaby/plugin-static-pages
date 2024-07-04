@@ -1,10 +1,10 @@
 import { definePlugin } from "@halo-dev/console-shared";
-import Projects from "./views/Projects.vue";
 import { markRaw } from "vue";
 import CarbonWebServicesContainer from "~icons/carbon/web-services-container";
 import "./styles/tailwind.css";
-import ProjectDetail from "./views/ProjectDetail.vue";
 import FilesEditor from "./views/FilesEditor.vue";
+import ProjectDetail from "./views/ProjectDetail.vue";
+import Projects from "./views/Projects.vue";
 
 export default definePlugin({
   components: {},

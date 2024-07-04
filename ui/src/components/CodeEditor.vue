@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import { Codemirror } from "vue-codemirror";
-import { javascript } from "@codemirror/lang-javascript";
-import { html } from "@codemirror/lang-html";
 import { css } from "@codemirror/lang-css";
+import { html } from "@codemirror/lang-html";
+import { javascript } from "@codemirror/lang-javascript";
+import type { LanguageSupport } from "@codemirror/language";
 import { EditorView } from "@codemirror/view";
 import { computed } from "vue";
-import type { LanguageSupport } from "@codemirror/language";
+import { Codemirror } from "vue-codemirror";
 
 const props = withDefaults(defineProps<{ path: string }>(), {});
 

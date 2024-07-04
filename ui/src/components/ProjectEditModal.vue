@@ -1,11 +1,12 @@
 <script lang="ts" setup>
-import { Dialog, Toast, VButton, VModal, VSpace } from "@halo-dev/components";
-import ProjectForm from "./ProjectForm.vue";
-import type { ProjectFormState } from "@/types/form";
-import { useMutation, useQueryClient } from "@tanstack/vue-query";
-import axios, { type AxiosResponse } from "axios";
-import { ref } from "vue";
 import type { Project } from "@/types";
+import type { ProjectFormState } from "@/types/form";
+import { axiosInstance } from "@halo-dev/api-client";
+import { Dialog, Toast, VButton, VModal, VSpace } from "@halo-dev/components";
+import { useMutation, useQueryClient } from "@tanstack/vue-query";
+import { type AxiosResponse } from "axios";
+import { ref } from "vue";
+import ProjectForm from "./ProjectForm.vue";
 
 const props = withDefaults(
   defineProps<{
@@ -25,7 +26,7 @@ const modal = ref();
 const { mutate, isLoading } = useMutation({
   mutationKey: ["plugin-static-pages:update-project"],
   mutationFn: async ({ data }: { data: ProjectFormState }) => {
-    const { data: projectToUpdate } = await axios.get(
+    const { data: projectToUpdate } = await axiosInstance.get(
       `/apis/staticpage.halo.run/v1alpha1/projects/${props.project.metadata.name}`
     );
 
@@ -34,7 +35,7 @@ const { mutate, isLoading } = useMutation({
       ...data,
     };
 
-    return await axios.put<Project, AxiosResponse<Project>, Project>(
+    return await axiosInstance.put<Project, AxiosResponse<Project>, Project>(
       `/apis/staticpage.halo.run/v1alpha1/projects/${props.project.metadata.name}`,
       projectToUpdate
     );
@@ -61,7 +62,7 @@ function handleDelete() {
     description: "确定要删除该静态网页项目吗？此操作无法恢复。",
     confirmType: "danger",
     async onConfirm() {
-      await axios.delete(
+      await axiosInstance.delete(
         `/apis/staticpage.halo.run/v1alpha1/projects/${props.project.metadata.name}`
       );
 

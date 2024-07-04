@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { Project } from "@/types";
-import { apiClient } from "@/utils/api-client";
+import { axiosInstance } from "@halo-dev/api-client";
 import {
   VAvatar,
   VButton,
@@ -9,11 +9,11 @@ import {
   VSpace,
 } from "@halo-dev/components";
 import { useQuery } from "@tanstack/vue-query";
-import { useRoute } from "vue-router";
-import FilesTreeSection from "./components/FilesTreeSection.vue";
-import { useRouteQuery } from "@vueuse/router";
-import FileContentEditor from "./components/FileContentEditor.vue";
 import { useLocalStorage } from "@vueuse/core";
+import { useRouteQuery } from "@vueuse/router";
+import { useRoute } from "vue-router";
+import FileContentEditor from "./components/FileContentEditor.vue";
+import FilesTreeSection from "./components/FilesTreeSection.vue";
 
 const route = useRoute();
 
@@ -22,7 +22,7 @@ const showSidebar = useLocalStorage("plugin-static-pages:show-sidebar", true);
 const { data: project } = useQuery<Project>({
   queryKey: ["plugin-static-pages:detail", route.params.name],
   queryFn: async () => {
-    const { data } = await apiClient.get<Project>(
+    const { data } = await axiosInstance.get<Project>(
       `/apis/staticpage.halo.run/v1alpha1/projects/${route.params.name}`
     );
     return data;
