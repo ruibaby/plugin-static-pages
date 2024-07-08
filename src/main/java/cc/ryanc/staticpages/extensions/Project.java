@@ -7,8 +7,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import org.springframework.lang.NonNull;
 import run.halo.app.extension.AbstractExtension;
 import run.halo.app.extension.GVK;
 
@@ -17,18 +15,9 @@ import run.halo.app.extension.GVK;
 @GVK(group = "staticpage.halo.run", version = "v1alpha1", kind = "Project",
     plural = "projects", singular = "project")
 public class Project extends AbstractExtension {
-    public static final String SYNC_ON_STARTUP_INDEX = "sync-on-startup";
 
     @Schema(requiredMode = REQUIRED)
     private Spec spec;
-
-    @Getter(onMethod_ = @NonNull)
-    @Schema(requiredMode = NOT_REQUIRED)
-    private Status status = new Status();
-
-    public void setStatus(Status status) {
-        this.status = (status == null ? new Status() : status);
-    }
 
     @Data
     @Schema(name = "ProjectSpec")
@@ -55,11 +44,5 @@ public class Project extends AbstractExtension {
 
         @Schema(requiredMode = REQUIRED, minLength = 1)
         private String target;
-    }
-
-    @Data
-    @Schema(name = "ProjectStatus")
-    public static class Status {
-        private Long observedVersion;
     }
 }
