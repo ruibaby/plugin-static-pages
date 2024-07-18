@@ -1,9 +1,9 @@
-import type { Metadata } from "@halo-dev/api-client";
+import type { Metadata } from '@halo-dev/api-client';
 
 export interface Project {
   spec: Spec;
-  apiVersion: "staticpage.halo.run/v1alpha1";
-  kind: "Project";
+  apiVersion: 'staticpage.halo.run/v1alpha1';
+  kind: 'Project';
   metadata: Metadata;
 }
 

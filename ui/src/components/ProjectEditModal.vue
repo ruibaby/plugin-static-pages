@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import type { Project } from "@/types";
-import type { ProjectFormState } from "@/types/form";
-import { axiosInstance } from "@halo-dev/api-client";
-import { Dialog, Toast, VButton, VModal, VSpace } from "@halo-dev/components";
-import { useMutation, useQueryClient } from "@tanstack/vue-query";
-import { type AxiosResponse } from "axios";
-import { ref } from "vue";
-import ProjectForm from "./ProjectForm.vue";
+import type { Project } from '@/types';
+import type { ProjectFormState } from '@/types/form';
+import { axiosInstance } from '@halo-dev/api-client';
+import { Dialog, Toast, VButton, VModal, VSpace } from '@halo-dev/components';
+import { useMutation, useQueryClient } from '@tanstack/vue-query';
+import { type AxiosResponse } from 'axios';
+import { ref } from 'vue';
+import ProjectForm from './ProjectForm.vue';
 
 const props = withDefaults(
   defineProps<{
@@ -16,7 +16,7 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-  (event: "close"): void;
+  (event: 'close'): void;
 }>();
 
 const queryClient = useQueryClient();
@@ -24,7 +24,7 @@ const queryClient = useQueryClient();
 const modal = ref();
 
 const { mutate, isLoading } = useMutation({
-  mutationKey: ["plugin-static-pages:update-project"],
+  mutationKey: ['plugin-static-pages:update-project'],
   mutationFn: async ({ data }: { data: ProjectFormState }) => {
     const { data: projectToUpdate } = await axiosInstance.get(
       `/apis/staticpage.halo.run/v1alpha1/projects/${props.project.metadata.name}`
@@ -41,14 +41,14 @@ const { mutate, isLoading } = useMutation({
     );
   },
   onSuccess() {
-    Toast.success("保存成功");
-    queryClient.invalidateQueries({ queryKey: ["plugin-static-pages:list"] });
-    queryClient.invalidateQueries({ queryKey: ["plugin-static-pages:detail"] });
+    Toast.success('保存成功');
+    queryClient.invalidateQueries({ queryKey: ['plugin-static-pages:list'] });
+    queryClient.invalidateQueries({ queryKey: ['plugin-static-pages:detail'] });
     modal.value.close();
   },
   retry: 3,
   onError() {
-    Toast.error("保存失败，请重试");
+    Toast.error('保存失败，请重试');
   },
 });
 
@@ -58,19 +58,19 @@ function onSubmit(data: ProjectFormState) {
 
 function handleDelete() {
   Dialog.warning({
-    title: "删除静态网页项目",
-    description: "确定要删除该静态网页项目吗？此操作无法恢复。",
-    confirmType: "danger",
+    title: '删除静态网页项目',
+    description: '确定要删除该静态网页项目吗？此操作无法恢复。',
+    confirmType: 'danger',
     async onConfirm() {
       await axiosInstance.delete(
         `/apis/staticpage.halo.run/v1alpha1/projects/${props.project.metadata.name}`
       );
 
-      Toast.success("删除成功");
+      Toast.success('删除成功');
 
       modal.value.close();
 
-      queryClient.invalidateQueries({ queryKey: ["plugin-static-pages:list"] });
+      queryClient.invalidateQueries({ queryKey: ['plugin-static-pages:list'] });
     },
   });
 }
@@ -95,7 +95,7 @@ function handleDelete() {
       @submit="onSubmit"
     />
     <template #footer>
-      <div class="sp-flex sp-justify-between">
+      <div class="flex justify-between">
         <VSpace>
           <VButton
             type="secondary"

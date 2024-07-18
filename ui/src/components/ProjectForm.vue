@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { ProjectFormState } from "@/types/form";
+import type { ProjectFormState } from '@/types/form';
 
 withDefaults(
   defineProps<{
@@ -11,11 +11,11 @@ withDefaults(
 );
 
 const emit = defineEmits<{
-  (event: "submit", data: ProjectFormState): void;
+  (event: 'submit', data: ProjectFormState): void;
 }>();
 
 function onSubmit(data: ProjectFormState) {
-  emit("submit", data);
+  emit('submit', data);
 }
 </script>
 
@@ -46,37 +46,16 @@ function onSubmit(data: ProjectFormState) {
         matches: '不能以空格开头或结尾',
       }"
     ></FormKit>
-    <FormKit
-      type="attachment"
-      name="icon"
-      label="图标"
-      :model-value="formState?.icon"
-    >
-    </FormKit>
+    <FormKit type="attachment" name="icon" label="图标" :model-value="formState?.icon"> </FormKit>
     <FormKit
       type="textarea"
       name="description"
       :model-value="formState?.description"
       label="描述"
     ></FormKit>
-    <FormKit
-      type="repeater"
-      :value="formState?.rewrites"
-      name="rewrites"
-      label="重写规则"
-    >
-      <FormKit
-        type="text"
-        name="source"
-        label="源"
-        validation="required"
-      ></FormKit>
-      <FormKit
-        type="text"
-        name="target"
-        label="目标"
-        validation="required"
-      ></FormKit>
+    <FormKit type="repeater" :value="formState?.rewrites" name="rewrites" label="重写规则">
+      <FormKit type="text" name="source" label="源" validation="required"></FormKit>
+      <FormKit type="text" name="target" label="目标" validation="required"></FormKit>
     </FormKit>
   </FormKit>
 </template>

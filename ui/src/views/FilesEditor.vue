@@ -1,26 +1,20 @@
 <script lang="ts" setup>
-import type { Project } from "@/types";
-import { axiosInstance } from "@halo-dev/api-client";
-import {
-  VAvatar,
-  VButton,
-  VCard,
-  VPageHeader,
-  VSpace,
-} from "@halo-dev/components";
-import { useQuery } from "@tanstack/vue-query";
-import { useLocalStorage } from "@vueuse/core";
-import { useRouteQuery } from "@vueuse/router";
-import { useRoute } from "vue-router";
-import FileContentEditor from "./components/FileContentEditor.vue";
-import FilesTreeSection from "./components/FilesTreeSection.vue";
+import type { Project } from '@/types';
+import { axiosInstance } from '@halo-dev/api-client';
+import { VAvatar, VButton, VCard, VPageHeader, VSpace } from '@halo-dev/components';
+import { useQuery } from '@tanstack/vue-query';
+import { useLocalStorage } from '@vueuse/core';
+import { useRouteQuery } from '@vueuse/router';
+import { useRoute } from 'vue-router';
+import FileContentEditor from './components/FileContentEditor.vue';
+import FilesTreeSection from './components/FilesTreeSection.vue';
 
 const route = useRoute();
 
-const showSidebar = useLocalStorage("plugin-static-pages:show-sidebar", true);
+const showSidebar = useLocalStorage('plugin-static-pages:show-sidebar', true);
 
 const { data: project } = useQuery<Project>({
-  queryKey: ["plugin-static-pages:detail", route.params.name],
+  queryKey: ['plugin-static-pages:detail', route.params.name],
   queryFn: async () => {
     const { data } = await axiosInstance.get<Project>(
       `/apis/staticpage.halo.run/v1alpha1/projects/${route.params.name}`
@@ -29,7 +23,7 @@ const { data: project } = useQuery<Project>({
   },
 });
 
-const selectedFilePath = useRouteQuery<string | undefined>("path");
+const selectedFilePath = useRouteQuery<string | undefined>('path');
 </script>
 
 <template>
@@ -37,7 +31,7 @@ const selectedFilePath = useRouteQuery<string | undefined>("path");
     <template #icon>
       <VAvatar
         :src="project?.spec.icon"
-        class="sp-mr-2 sp-self-center"
+        class="mr-2 self-center"
         :alt="project?.spec.title"
         size="xs"
       />
@@ -49,35 +43,24 @@ const selectedFilePath = useRouteQuery<string | undefined>("path");
     </template>
   </VPageHeader>
 
-  <div class="sp-m-0 sp-rounded sp-bg-white md:sp-m-4">
-    <VCard
-      style="height: calc(100vh - 5.5rem)"
-      :body-class="['sp-h-full', '!sp-p-0']"
-    >
+  <div class="m-0 rounded bg-white md:m-4">
+    <VCard style="height: calc(100vh - 5.5rem)" :body-class="['h-full', '!p-0']">
       <div
-        class="sp-grid sp-h-full sp-grid-cols-12 sp-divide-y sm:sp-divide-x sm:sp-divide-y-0"
-        :class="{ '!sp-divide-none': !showSidebar }"
+        class="grid h-full grid-cols-12 divide-y sm:divide-x sm:divide-y-0"
+        :class="{ '!divide-none': !showSidebar }"
       >
         <div
           v-show="showSidebar"
-          class="sp-relative sp-col-span-12 sp-h-full sp-overflow-auto sp-p-2 sm:sp-col-span-6 lg:sp-col-span-5 xl:sp-col-span-3"
+          class="relative col-span-12 h-full overflow-auto p-2 sm:col-span-6 lg:col-span-5 xl:col-span-3"
         >
-          <FilesTreeSection
-            v-if="project"
-            v-model="selectedFilePath"
-            :project="project"
-          />
+          <FilesTreeSection v-if="project" v-model="selectedFilePath" :project="project" />
         </div>
 
         <div
-          class="sp-col-span-12 sm:sp-col-span-6 lg:sp-col-span-7 xl:sp-col-span-9"
-          :class="{ '!sp-col-span-12': !showSidebar }"
+          class="col-span-12 sm:col-span-6 lg:col-span-7 xl:col-span-9"
+          :class="{ '!col-span-12': !showSidebar }"
         >
-          <FileContentEditor
-            v-if="project"
-            :project="project"
-            :path="selectedFilePath"
-          />
+          <FileContentEditor v-if="project" :project="project" :path="selectedFilePath" />
         </div>
       </div>
     </VCard>

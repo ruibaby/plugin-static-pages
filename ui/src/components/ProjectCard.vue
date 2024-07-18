@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import type { Project } from "@/types";
-import { VAvatar, VButton, VSpace, VStatusDot } from "@halo-dev/components";
-import { ref } from "vue";
-import ProjectEditModal from "./ProjectEditModal.vue";
+import type { Project } from '@/types';
+import { VAvatar, VButton, VSpace, VStatusDot } from '@halo-dev/components';
+import { ref } from 'vue';
+import ProjectEditModal from './ProjectEditModal.vue';
 
 const props = withDefaults(
   defineProps<{
@@ -12,23 +12,19 @@ const props = withDefaults(
 );
 
 function handleOpen() {
-  window.open(`/${props.project.spec.directory}`, "_blank");
+  window.open(`/${props.project.spec.directory}`, '_blank');
 }
 
 const editModalVisible = ref(false);
 </script>
 
 <template>
-  <ProjectEditModal
-    v-if="editModalVisible"
-    :project="project"
-    @close="editModalVisible = false"
-  />
+  <ProjectEditModal v-if="editModalVisible" :project="project" @close="editModalVisible = false" />
 
   <div
-    class="sp-cursor-pointer sp-rounded-lg sp-space-y-4 sp-bg-white sp-flex sp-flex-col sp-px-4 sp-py-3 sp-group sp-shadow sp-transition-all hover:sp-ring-1"
+    class="cursor-pointer rounded-lg space-y-4 bg-white flex flex-col px-4 py-3 group shadow transition-all hover:ring-1"
   >
-    <div class="sp-flex sp-items-center sp-gap-4 sp-flex-none">
+    <div class="flex items-center gap-4 flex-none">
       <VAvatar :src="project.spec.icon" :alt="project.spec.title" size="xs" />
 
       <RouterLink
@@ -36,22 +32,18 @@ const editModalVisible = ref(false);
           name: 'StaticPageProjectDetail',
           params: { name: project.metadata.name },
         }"
-        class="sp-line-clamp-1 sp-text-base sp-font-semibold hover:sp-text-gray-600 hover:sp-underline"
+        class="line-clamp-1 text-base font-semibold hover:text-gray-600 hover:underline"
       >
         {{ project.spec.title }}
       </RouterLink>
 
-      <VStatusDot
-        v-if="!!project.metadata.deletionTimestamp"
-        animate
-        state="warning"
-      />
+      <VStatusDot v-if="!!project.metadata.deletionTimestamp" animate state="warning" />
     </div>
-    <ul class="sp-space-y-2 sp-text-sm sp-text-gray-600 sp-flex-1">
+    <ul class="space-y-2 text-sm text-gray-600 flex-1">
       <li>{{ project.spec.description }}</li>
-      <li class="sp-line-clamp-1">/{{ project.spec.directory }}</li>
+      <li class="line-clamp-1">/{{ project.spec.directory }}</li>
     </ul>
-    <div class="sp-flex sp-justify-end sp-flex-none">
+    <div class="flex justify-end flex-none">
       <VSpace>
         <VButton
           size="sm"

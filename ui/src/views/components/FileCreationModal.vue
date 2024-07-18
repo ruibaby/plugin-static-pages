@@ -1,18 +1,15 @@
 <script lang="ts" setup>
-import type { Project } from "@/types";
-import { normalizePath } from "@/utils/path";
-import { axiosInstance } from "@halo-dev/api-client";
-import { Toast, VButton, VModal, VSpace } from "@halo-dev/components";
-import { useQueryClient } from "@tanstack/vue-query";
-import { ref } from "vue";
+import type { Project } from '@/types';
+import { normalizePath } from '@/utils/path';
+import { axiosInstance } from '@halo-dev/api-client';
+import { Toast, VButton, VModal, VSpace } from '@halo-dev/components';
+import { useQueryClient } from '@tanstack/vue-query';
+import { ref } from 'vue';
 
-const props = withDefaults(
-  defineProps<{ project: Project; isDir?: boolean; baseDir: string }>(),
-  {
-    isDir: false,
-    baseDir: "/",
-  }
-);
+const props = withDefaults(defineProps<{ project: Project; isDir?: boolean; baseDir: string }>(), {
+  isDir: false,
+  baseDir: '/',
+});
 
 const queryClient = useQueryClient();
 
@@ -32,9 +29,9 @@ async function onSubmit({ path }: { path: string }) {
       }
     );
 
-    Toast.success("创建成功");
+    Toast.success('创建成功');
 
-    queryClient.invalidateQueries({ queryKey: ["plugin-static-pages:files"] });
+    queryClient.invalidateQueries({ queryKey: ['plugin-static-pages:files'] });
 
     modal.value.close();
   } catch (error) {
@@ -47,17 +44,8 @@ async function onSubmit({ path }: { path: string }) {
 
 <template>
   <VModal ref="modal" :width="500" :title="isDir ? '新建文件夹' : '新建文件'">
-    <FormKit
-      id="create-file-form"
-      type="form"
-      name="create-file-form"
-      @submit="onSubmit"
-    >
-      <FormKit
-        :label="isDir ? '文件夹名' : '文件名'"
-        name="path"
-        validation="required"
-      ></FormKit>
+    <FormKit id="create-file-form" type="form" name="create-file-form" @submit="onSubmit">
+      <FormKit :label="isDir ? '文件夹名' : '文件名'" name="path" validation="required"></FormKit>
     </FormKit>
 
     <template #footer>

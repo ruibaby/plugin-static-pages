@@ -1,25 +1,23 @@
 <script lang="ts" setup>
-import ProjectCard from "@/components/ProjectCard.vue";
-import ProjectCreationModal from "@/components/ProjectCreationModal.vue";
-import type { ListResponse, Project } from "@/types";
-import { axiosInstance } from "@halo-dev/api-client";
-import { IconAddCircle, VLoading, VPageHeader } from "@halo-dev/components";
-import { useQuery } from "@tanstack/vue-query";
-import { ref } from "vue";
-import CarbonWebServicesContainer from "~icons/carbon/web-services-container";
+import ProjectCard from '@/components/ProjectCard.vue';
+import ProjectCreationModal from '@/components/ProjectCreationModal.vue';
+import type { ListResponse, Project } from '@/types';
+import { axiosInstance } from '@halo-dev/api-client';
+import { IconAddCircle, VLoading, VPageHeader } from '@halo-dev/components';
+import { useQuery } from '@tanstack/vue-query';
+import { ref } from 'vue';
+import CarbonWebServicesContainer from '~icons/carbon/web-services-container';
 
 const { data, isLoading } = useQuery({
-  queryKey: ["plugin-static-pages:list"],
+  queryKey: ['plugin-static-pages:list'],
   queryFn: async () => {
     const { data } = await axiosInstance.get<ListResponse<Project>>(
-      "/apis/staticpage.halo.run/v1alpha1/projects"
+      '/apis/staticpage.halo.run/v1alpha1/projects'
     );
     return data;
   },
   refetchInterval(data) {
-    const hasDeletingData = data?.items.some(
-      (project) => !!project.metadata.deletionTimestamp
-    );
+    const hasDeletingData = data?.items.some((project) => !!project.metadata.deletionTimestamp);
 
     return hasDeletingData ? 1000 : false;
   },
@@ -29,22 +27,19 @@ const creationModalVisible = ref(false);
 </script>
 
 <template>
-  <ProjectCreationModal
-    v-if="creationModalVisible"
-    @close="creationModalVisible = false"
-  />
+  <ProjectCreationModal v-if="creationModalVisible" @close="creationModalVisible = false" />
 
   <VPageHeader title="静态网页服务">
     <template #icon>
-      <CarbonWebServicesContainer class="sp-mr-2 sp-self-center" />
+      <CarbonWebServicesContainer class="mr-2 self-center" />
     </template>
   </VPageHeader>
 
-  <div class="sp-m-2 md:sp-m-4">
+  <div class="m-2 md:m-4">
     <VLoading v-if="isLoading" />
     <Transition v-else appear name="fade">
       <div
-        class="sp-grid sp-grid-cols-1 sp-gap-3 sm:sp-grid-cols-2 lg:sp-grid-cols-3 xl:sp-grid-cols-4 2xl:sp-grid-cols-5"
+        class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
       >
         <ProjectCard
           v-for="project in data?.items"
@@ -53,21 +48,13 @@ const creationModalVisible = ref(false);
         />
 
         <div
-          class="sp-group sp-flex sp-min-h-[10rem] sp-cursor-pointer sp-flex-col sp-items-center sp-justify-center sp-space-y-2 sp-rounded-lg sp-border sp-border-dashed sp-bg-white sp-px-4 sp-py-3 sp-shadow sp-transition-all hover:sp-border-solid hover:sp-border-indigo-300"
+          class="group flex min-h-[10rem] cursor-pointer flex-col items-center justify-center space-y-2 rounded-lg border border-dashed bg-white px-4 py-3 shadow transition-all hover:border-solid hover:border-indigo-300"
           @click="creationModalVisible = true"
         >
-          <div
-            class="sp-inline-flex sp-rounded-full sp-bg-indigo-100 sp-p-2 sp-transition-all group-hover:sp-p-2.5"
-          >
-            <IconAddCircle
-              class="sp-text-xl sp-text-indigo-500 group-hover:sp-text-indigo-700"
-            />
+          <div class="inline-flex rounded-full bg-indigo-100 p-2 transition-all group-hover:p-2.5">
+            <IconAddCircle class="text-xl text-indigo-500 group-hover:text-indigo-700" />
           </div>
-          <span
-            class="sp-text-sm sp-text-gray-600 group-hover:sp-text-indigo-600"
-          >
-            新建项目
-          </span>
+          <span class="text-sm text-gray-600 group-hover:text-indigo-600"> 新建项目 </span>
         </div>
       </div>
     </Transition>

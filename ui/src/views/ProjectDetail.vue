@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import ProjectEditModal from "@/components/ProjectEditModal.vue";
-import type { Project } from "@/types";
-import { axiosInstance } from "@halo-dev/api-client";
+import ProjectEditModal from '@/components/ProjectEditModal.vue';
+import type { Project } from '@/types';
+import { axiosInstance } from '@halo-dev/api-client';
 import {
   IconSettings,
   VAvatar,
@@ -11,13 +11,13 @@ import {
   VPageHeader,
   VSpace,
   VTabbar,
-} from "@halo-dev/components";
-import { useQuery } from "@tanstack/vue-query";
-import { useRouteQuery } from "@vueuse/router";
-import { type Component, markRaw, type Raw, ref } from "vue";
-import { useRoute } from "vue-router";
-import Detail from "./tabs/Detail.vue";
-import Files from "./tabs/Files.vue";
+} from '@halo-dev/components';
+import { useQuery } from '@tanstack/vue-query';
+import { useRouteQuery } from '@vueuse/router';
+import { markRaw, ref, type Component, type Raw } from 'vue';
+import { useRoute } from 'vue-router';
+import Detail from './tabs/Detail.vue';
+import Files from './tabs/Files.vue';
 
 interface Tab {
   id: string;
@@ -28,7 +28,7 @@ interface Tab {
 const route = useRoute();
 
 const { data: project, isLoading } = useQuery<Project>({
-  queryKey: ["plugin-static-pages:detail", route.params.name],
+  queryKey: ['plugin-static-pages:detail', route.params.name],
   queryFn: async () => {
     const { data } = await axiosInstance.get<Project>(
       `/apis/staticpage.halo.run/v1alpha1/projects/${route.params.name}`
@@ -39,21 +39,21 @@ const { data: project, isLoading } = useQuery<Project>({
 
 const tabs: Tab[] = [
   {
-    id: "detail",
-    label: "详情",
+    id: 'detail',
+    label: '详情',
     component: markRaw(Detail),
   },
   {
-    id: "files",
-    label: "文件管理",
+    id: 'files',
+    label: '文件管理',
     component: markRaw(Files),
   },
 ];
 
-const activeTab = useRouteQuery("tab", tabs[0].id);
+const activeTab = useRouteQuery('tab', tabs[0].id);
 
 function handleOpen() {
-  window.open(`/${project.value?.spec.directory}`, "_blank");
+  window.open(`/${project.value?.spec.directory}`, '_blank');
 }
 
 const editModalVisible = ref(false);
@@ -69,7 +69,7 @@ const editModalVisible = ref(false);
     <template #icon>
       <VAvatar
         :src="project?.spec.icon"
-        class="sp-mr-2 sp-self-center"
+        class="mr-2 self-center"
         :alt="project?.spec.title"
         size="xs"
       />
@@ -79,7 +79,7 @@ const editModalVisible = ref(false);
         <VButton size="sm" @click="handleOpen"> 访问</VButton>
         <VButton @click="editModalVisible = true">
           <template #icon>
-            <IconSettings class="sp-size-full" />
+            <IconSettings class="size-full" />
           </template>
           设置
         </VButton>
@@ -89,23 +89,19 @@ const editModalVisible = ref(false);
 
   <VLoading v-if="isLoading" />
 
-  <div v-else class="sp-m-0 md:sp-m-4">
-    <VCard :body-class="['!sp-p-0', '!sp-overflow-visible']">
+  <div v-else class="m-0 md:m-4">
+    <VCard :body-class="['!p-0', '!overflow-visible']">
       <template #header>
         <VTabbar
           v-model:active-id="activeTab"
           :items="tabs.map((item) => ({ id: item.id, label: item.label }))"
-          class="sp-w-full !sp-rounded-none"
+          class="w-full !rounded-none"
           type="outline"
         ></VTabbar>
       </template>
-      <div class="rounded-b-base sp-bg-white">
+      <div class="rounded-b-base bg-white">
         <template v-for="tab in tabs" :key="tab.id">
-          <component
-            :is="tab.component"
-            v-if="activeTab === tab.id"
-            :project="project"
-          />
+          <component :is="tab.component" v-if="activeTab === tab.id" :project="project" />
         </template>
       </div>
     </VCard>

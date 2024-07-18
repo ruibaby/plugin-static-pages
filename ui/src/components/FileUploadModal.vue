@@ -1,21 +1,21 @@
 <script lang="ts" setup>
-import type { Project } from "@/types";
-import { VButton, VModal, VTabItem, VTabs } from "@halo-dev/components";
-import { ref } from "vue";
+import type { Project } from '@/types';
+import { VButton, VModal, VTabItem, VTabs } from '@halo-dev/components';
+import { ref } from 'vue';
 // @ts-ignore
-import docCli from "@/docs/cli.md";
+import docCli from '@/docs/cli.md';
 
 withDefaults(defineProps<{ project: Project; path?: string }>(), {
-  path: "/",
+  path: '/',
 });
 
 const emit = defineEmits<{
-  (event: "close"): void;
+  (event: 'close'): void;
 }>();
 
 const modal = ref();
 
-const activeTab = ref("file");
+const activeTab = ref('file');
 
 const autoUnzip = ref(false);
 </script>

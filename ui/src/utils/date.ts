@@ -1,22 +1,19 @@
-import dayjs from "dayjs";
-import "dayjs/locale/zh-cn";
-import relativeTime from "dayjs/plugin/relativeTime";
-import timezone from "dayjs/plugin/timezone";
-import utc from "dayjs/plugin/utc";
+import dayjs from 'dayjs';
+import 'dayjs/locale/zh-cn';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
 
 dayjs.extend(timezone);
 dayjs.extend(utc);
 dayjs.extend(relativeTime);
-dayjs.locale("zh-cn");
+dayjs.locale('zh-cn');
 
-export function formatDatetime(
-  date: string | Date | undefined | null,
-  tz?: string
-): string {
+export function formatDatetime(date: string | Date | undefined | null, tz?: string): string {
   if (!date) {
-    return "";
+    return '';
   }
-  return dayjs(date).tz(tz).format("YYYY-MM-DD HH:mm");
+  return dayjs(date).tz(tz).format('YYYY-MM-DD HH:mm');
 }
 
 /**
