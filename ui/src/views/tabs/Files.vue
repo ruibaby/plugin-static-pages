@@ -1,10 +1,10 @@
 <script lang="ts" setup>
+import { staticPageConsoleApiClient } from '@/api';
 import FileIcon from '@/components/FileIcon.vue';
 import FileUploadModal from '@/components/FileUploadModal.vue';
 import type { Project, ProjectFile } from '@/types';
 import { formatDatetime, relativeTimeTo } from '@/utils/date';
 import { normalizePath } from '@/utils/path';
-import { axiosInstance } from '@halo-dev/api-client';
 import { Dialog, VButton, VSpace } from '@halo-dev/components';
 import { useQuery, useQueryClient } from '@tanstack/vue-query';
 import { useRouteQuery } from '@vueuse/router';
@@ -25,9 +25,12 @@ const selectedDir = useRouteQuery<string>('dir', '/', { mode: 'push' });
 const { data } = useQuery({
   queryKey: ['plugin-static-pages:files', project.value.metadata.name, selectedDir],
   queryFn: async () => {
-    const { data } = await axiosInstance.get<ProjectFile[]>(
-      `/apis/console.api.staticpage.halo.run/v1alpha1/projects/${props.project.metadata.name}/files?path=${selectedDir.value}`
-    );
+    // TODO: 没有类型
+    const { data } = await staticPageConsoleApiClient.project.listFilesInProject({
+      name: props.project.metadata.name,
+      path: selectedDir.value,
+    });
+
     return data.sort((a, b) => {
       if (a.directory && !b.directory) return -1;
       if (!a.directory && b.directory) return 1;
@@ -82,9 +85,10 @@ function handleDeleteFile(file: ProjectFile) {
     async onConfirm() {
       const path = normalizePath(selectedDir.value, file.name);
 
-      await axiosInstance.delete(
-        `/apis/console.api.staticpage.halo.run/v1alpha1/projects/${props.project.metadata.name}/files?path=${path}`
-      );
+      await staticPageConsoleApiClient.project.deleteFileInProject({
+        name: props.project.metadata.name,
+        path,
+      });
 
       queryClient.invalidateQueries([
         'plugin-static-pages:files',
@@ -101,9 +105,10 @@ function handleCleanup() {
     description: '确定要清空所有的项目文件吗？此操作无法恢复。',
     confirmType: 'danger',
     async onConfirm() {
-      await axiosInstance.delete(
-        `/apis/console.api.staticpage.halo.run/v1alpha1/projects/${props.project.metadata.name}/files?path=/`
-      );
+      await staticPageConsoleApiClient.project.deleteFileInProject({
+        name: props.project.metadata.name,
+        path: '/',
+      });
 
       queryClient.invalidateQueries([
         'plugin-static-pages:files',

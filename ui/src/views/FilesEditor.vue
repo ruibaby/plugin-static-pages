@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import type { Project } from '@/types';
-import { axiosInstance } from '@halo-dev/api-client';
+import { staticPageCoreApiClient } from '@/api';
+import type { Project } from '@/api/generated';
 import { VAvatar, VButton, VCard, VPageHeader, VSpace } from '@halo-dev/components';
 import { useQuery } from '@tanstack/vue-query';
 import { useLocalStorage } from '@vueuse/core';
@@ -16,9 +16,9 @@ const showSidebar = useLocalStorage('plugin-static-pages:show-sidebar', true);
 const { data: project } = useQuery<Project>({
   queryKey: ['plugin-static-pages:detail', route.params.name],
   queryFn: async () => {
-    const { data } = await axiosInstance.get<Project>(
-      `/apis/staticpage.halo.run/v1alpha1/projects/${route.params.name}`
-    );
+    const { data } = await staticPageCoreApiClient.project.getProject({
+      name: route.params.name as string,
+    });
     return data;
   },
 });

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
+import { staticPageCoreApiClient } from '@/api';
+import type { Project } from '@/api/generated';
 import ProjectEditModal from '@/components/ProjectEditModal.vue';
-import type { Project } from '@/types';
-import { axiosInstance } from '@halo-dev/api-client';
 import {
   IconSettings,
   VAvatar,
@@ -30,9 +30,9 @@ const route = useRoute();
 const { data: project, isLoading } = useQuery<Project>({
   queryKey: ['plugin-static-pages:detail', route.params.name],
   queryFn: async () => {
-    const { data } = await axiosInstance.get<Project>(
-      `/apis/staticpage.halo.run/v1alpha1/projects/${route.params.name}`
-    );
+    const { data } = await staticPageCoreApiClient.project.getProject({
+      name: route.params.name as string,
+    });
     return data;
   },
 });

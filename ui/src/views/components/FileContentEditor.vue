@@ -1,9 +1,9 @@
 <script lang="ts" setup>
+import { staticPageConsoleApiClient } from '@/api';
+import type { Project } from '@/api/generated';
 import CodeEditor from '@/components/CodeEditor.vue';
 import HTMLVisualEditor from '@/components/HTMLVisualEditor.vue';
-import type { Project } from '@/types';
 import { normalizePath } from '@/utils/path';
-import { axiosInstance } from '@halo-dev/api-client';
 import { Toast, VButton, VSpace } from '@halo-dev/components';
 import { useEventListener, useLocalStorage } from '@vueuse/core';
 import { computed, onMounted, ref, watch } from 'vue';
@@ -60,9 +60,11 @@ async function handleFetchContent() {
     return;
   }
 
-  const { data } = await axiosInstance.get(
-    `/apis/console.api.staticpage.halo.run/v1alpha1/projects/${props.project.metadata.name}/file-content?path=${props.path}`
-  );
+  const { data } = await staticPageConsoleApiClient.project.getFileContent({
+    name: props.project.metadata.name,
+    path: props.path,
+  });
+
   content.value = data;
 }
 
@@ -74,10 +76,13 @@ async function handleSaveContent() {
   try {
     processing.value = true;
 
-    await axiosInstance.put(
-      `/apis/console.api.staticpage.halo.run/v1alpha1/projects/${props.project.metadata.name}/file-content?path=${props.path}`,
-      { content: content.value }
-    );
+    await staticPageConsoleApiClient.project.writeContentToFile({
+      name: props.project.metadata.name,
+      path: props.path,
+      writeContentRequest: {
+        content: content.value,
+      },
+    });
 
     Toast.success('保存成功');
     handleFetchContent();

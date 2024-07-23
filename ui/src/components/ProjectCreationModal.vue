@@ -1,10 +1,8 @@
 <script lang="ts" setup>
-import type { Project } from '@/types';
+import { staticPageCoreApiClient } from '@/api';
 import type { ProjectFormState } from '@/types/form';
-import { axiosInstance } from '@halo-dev/api-client';
 import { Toast, VButton, VModal, VSpace } from '@halo-dev/components';
 import { useMutation, useQueryClient } from '@tanstack/vue-query';
-import { type AxiosResponse } from 'axios';
 import { useRouter } from 'vue-router';
 import ProjectForm from './ProjectForm.vue';
 
@@ -19,9 +17,8 @@ const queryClient = useQueryClient();
 const { mutate, isLoading } = useMutation({
   mutationKey: ['create-project'],
   mutationFn: async ({ data }: { data: ProjectFormState }) => {
-    const { data: project } = await axiosInstance.post<Project, AxiosResponse<Project>, Project>(
-      `/apis/staticpage.halo.run/v1alpha1/projects`,
-      {
+    const { data: project } = await staticPageCoreApiClient.project.createProject({
+      project: {
         apiVersion: 'staticpage.halo.run/v1alpha1',
         kind: 'Project',
         metadata: {
@@ -35,8 +32,8 @@ const { mutate, isLoading } = useMutation({
           description: data.description,
           rewrites: data.rewrites,
         },
-      }
-    );
+      },
+    });
 
     return project;
   },
