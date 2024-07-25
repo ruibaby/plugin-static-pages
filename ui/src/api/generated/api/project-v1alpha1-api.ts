@@ -221,11 +221,11 @@ export const ProjectV1alpha1ApiAxiosParamCreator = function (configuration?: Con
         /**
          * Patch Project
          * @param {string} name Name of project
-         * @param {Set<JsonPatchInner>} [jsonPatchInner] 
+         * @param {Array<JsonPatchInner>} [jsonPatchInner] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        patchProject: async (name: string, jsonPatchInner?: Set<JsonPatchInner>, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        patchProject: async (name: string, jsonPatchInner?: Array<JsonPatchInner>, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'name' is not null or undefined
             assertParamExists('patchProject', 'name', name)
             const localVarPath = `/apis/staticpage.halo.run/v1alpha1/projects/{name}`
@@ -365,11 +365,11 @@ export const ProjectV1alpha1ApiFp = function(configuration?: Configuration) {
         /**
          * Patch Project
          * @param {string} name Name of project
-         * @param {Set<JsonPatchInner>} [jsonPatchInner] 
+         * @param {Array<JsonPatchInner>} [jsonPatchInner] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async patchProject(name: string, jsonPatchInner?: Set<JsonPatchInner>, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Project>> {
+        async patchProject(name: string, jsonPatchInner?: Array<JsonPatchInner>, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Project>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.patchProject(name, jsonPatchInner, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -550,10 +550,10 @@ export interface ProjectV1alpha1ApiPatchProjectRequest {
 
     /**
      * 
-     * @type {Set<JsonPatchInner>}
+     * @type {Array<JsonPatchInner>}
      * @memberof ProjectV1alpha1ApiPatchProject
      */
-    readonly jsonPatchInner?: Set<JsonPatchInner>
+    readonly jsonPatchInner?: Array<JsonPatchInner>
 }
 
 /**

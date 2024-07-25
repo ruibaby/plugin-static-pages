@@ -40,10 +40,10 @@ export interface Metadata {
     'deletionTimestamp'?: string | null;
     /**
      * 
-     * @type {Set<string>}
+     * @type {Array<string>}
      * @memberof Metadata
      */
-    'finalizers'?: Set<string> | null;
+    'finalizers'?: Array<string> | null;
     /**
      * The name field will be generated automatically according to the given generateName field
      * @type {string}

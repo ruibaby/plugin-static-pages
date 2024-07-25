@@ -27,7 +27,6 @@ const { mutate, isLoading } = useMutation({
   mutationFn: async ({ data }: { data: ProjectFormState }) => {
     return await staticPageCoreApiClient.project.patchProject({
       name: props.project.metadata.name,
-      // TODO: 类型异常
       jsonPatchInner: [
         {
           op: 'add',
