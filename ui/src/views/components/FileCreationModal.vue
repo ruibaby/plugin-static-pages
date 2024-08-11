@@ -50,6 +50,7 @@ async function onSubmit({ path }: { path: string }) {
 
     <template #footer>
       <VSpace>
+        <!-- @vue-ignore -->
         <VButton
           :loading="submitting"
           type="secondary"

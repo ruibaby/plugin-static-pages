@@ -111,6 +111,7 @@ function handleDelete() {
     <template #footer>
       <div class="flex justify-between">
         <VSpace>
+          <!-- @vue-ignore -->
           <VButton
             type="secondary"
             :loading="isLoading"

@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { staticPageConsoleApiClient } from '@/api';
+import type { Project, ProjectFile } from '@/api/generated';
 import FileIcon from '@/components/FileIcon.vue';
 import FileUploadModal from '@/components/FileUploadModal.vue';
-import type { Project, ProjectFile } from '@/types';
 import { formatDatetime, relativeTimeTo } from '@/utils/date';
 import { normalizePath } from '@/utils/path';
 import { Dialog, VButton, VSpace } from '@halo-dev/components';
@@ -25,7 +25,6 @@ const selectedDir = useRouteQuery<string>('dir', '/', { mode: 'push' });
 const { data } = useQuery({
   queryKey: ['plugin-static-pages:files', project.value.metadata.name, selectedDir],
   queryFn: async () => {
-    // TODO: 没有类型
     const { data } = await staticPageConsoleApiClient.project.listFilesInProject({
       name: props.project.metadata.name,
       path: selectedDir.value,
@@ -34,7 +33,7 @@ const { data } = useQuery({
     return data.sort((a, b) => {
       if (a.directory && !b.directory) return -1;
       if (!a.directory && b.directory) return 1;
-      return a.name.localeCompare(b.name);
+      return a.name!.localeCompare(b.name!);
     });
   },
 });
@@ -72,7 +71,7 @@ const breadcrumbItems = computed(() => {
 
 function handleOpenFile(file: ProjectFile) {
   window.open(
-    normalizePath('/', project.value.spec.directory, selectedDir.value, file.name),
+    normalizePath('/', project.value.spec.directory, selectedDir.value, file.name || ''),
     '_blank'
   );
 }
@@ -83,7 +82,7 @@ function handleDeleteFile(file: ProjectFile) {
     description: `确定要删除文件${file.directory ? '夹' : ''}：${file.name}吗？此操作无法恢复。`,
     confirmType: 'danger',
     async onConfirm() {
-      const path = normalizePath(selectedDir.value, file.name);
+      const path = normalizePath(selectedDir.value, file.name || '');
 
       await staticPageConsoleApiClient.project.deleteFileInProject({
         name: props.project.metadata.name,
@@ -239,7 +238,7 @@ function onUploadModalClose() {
             >
               <td class="whitespace-nowrap py-4 px-4 text-sm font-medium text-gray-900">
                 <div class="inline-flex items-center gap-2">
-                  <FileIcon :type="file.type" />
+                  <FileIcon :type="file.type!" />
                   <span class="group-hover:text-blue-600">
                     {{ file.name }}
                   </span>
@@ -254,7 +253,7 @@ function onUploadModalClose() {
                 {{ file.type }}
               </td>
               <td class="whitespace-nowrap px-4 py-4 text-sm text-gray-500">
-                {{ prettyBytes(file.size) }}
+                {{ prettyBytes(file.size || 0) }}
               </td>
               <td class="whitespace-nowrap px-4 py-4 text-sm text-gray-500 cursor-pointer">
                 <span v-tooltip="formatDatetime(file.lastModifiedTime)">

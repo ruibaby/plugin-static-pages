@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { Project } from '@/types';
+import type { Project } from '@/api/generated';
 import { VAvatar, VButton, VSpace, VStatusDot } from '@halo-dev/components';
 import { ref } from 'vue';
 import ProjectEditModal from './ProjectEditModal.vue';

@@ -16,6 +16,7 @@ models/index.ts
 models/json-patch-inner.ts
 models/metadata.ts
 models/move-operation.ts
+models/project-file.ts
 models/project-list.ts
 models/project-rewrite.ts
 models/project-spec.ts
@@ -23,4 +24,5 @@ models/project.ts
 models/remove-operation.ts
 models/replace-operation.ts
 models/test-operation.ts
+models/upload-request-form-data.ts
 models/write-content-request.ts

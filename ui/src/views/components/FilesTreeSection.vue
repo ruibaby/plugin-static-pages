@@ -1,8 +1,7 @@
 <script lang="ts" setup>
 import { staticPageConsoleApiClient } from '@/api';
-import type { Project } from '@/api/generated';
+import type { Project, ProjectFile } from '@/api/generated';
 import FileIcon from '@/components/FileIcon.vue';
-import type { ProjectFile } from '@/types';
 import { normalizePath } from '@/utils/path';
 import {
   Dialog,
@@ -38,7 +37,6 @@ const {
 } = useQuery({
   queryKey: ['plugin-static-pages:files', props.project.metadata.name, '/'],
   queryFn: async () => {
-    // TODO: 没有类型
     const { data } = await staticPageConsoleApiClient.project.listFilesInProject({
       name: props.project.metadata.name,
       path: '/',
@@ -48,7 +46,7 @@ const {
       .sort((a, b) => {
         if (a.directory && !b.directory) return -1;
         if (!a.directory && b.directory) return 1;
-        return a.name.localeCompare(b.name);
+        return a.name!.localeCompare(b.name!);
       })
       .map((item) => {
         return { ...item, children: [] };
@@ -77,7 +75,7 @@ async function onAfterDrop() {}
 function getFileFullPath(stat: Stat<ProjectFile>): string {
   const parent = stat.parent;
   if (!parent) {
-    return stat.data.name;
+    return stat.data.name!;
   }
   return getFileFullPath(parent) + '/' + stat.data.name;
 }
@@ -87,7 +85,6 @@ async function onNodeOpen(stat: Stat<ProjectFile>) {
     return;
   }
 
-  // TODO: 没有类型
   const { data } = await staticPageConsoleApiClient.project.listFilesInProject({
     name: props.project.metadata.name,
     path: normalizePath('/', getFileFullPath(stat)),
@@ -96,7 +93,7 @@ async function onNodeOpen(stat: Stat<ProjectFile>) {
   const childrenMap = stat.children.map((item) => item.data.name);
 
   data.forEach((file) => {
-    if (childrenMap.includes(file.name)) {
+    if (childrenMap.includes(file.name!)) {
       return;
     }
 

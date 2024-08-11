@@ -17,14 +17,22 @@
 /**
  * 
  * @export
- * @interface WriteContentRequest
+ * @interface UploadRequestFormData
  */
-export interface WriteContentRequest {
+export interface UploadRequestFormData {
+    [key: string]: Array<object> | any;
+
     /**
      * 
-     * @type {string}
-     * @memberof WriteContentRequest
+     * @type {{ [key: string]: object; }}
+     * @memberof UploadRequestFormData
      */
-    'content': string;
+    'all'?: { [key: string]: object; };
+    /**
+     * 
+     * @type {boolean}
+     * @memberof UploadRequestFormData
+     */
+    'empty'?: boolean;
 }
 

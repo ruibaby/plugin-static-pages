@@ -61,6 +61,7 @@ function onSubmit(data: ProjectFormState) {
     <ProjectForm @submit="onSubmit" />
     <template #footer>
       <VSpace>
+        <!-- @vue-ignore -->
         <VButton
           type="secondary"
           :loading="isLoading"
