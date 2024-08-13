@@ -1,4 +1,4 @@
-import type { ProjectRewrite } from '.';
+import type { ProjectRewrite } from '@/api/generated';
 
 export interface ProjectFormState {
   title: string;

@@ -1,10 +1,9 @@
 <script lang="ts" setup>
-import type { Project } from '@/types';
+import { staticPageCoreApiClient } from '@/api';
+import type { Project } from '@/api/generated';
 import type { ProjectFormState } from '@/types/form';
-import { axiosInstance } from '@halo-dev/api-client';
 import { Dialog, Toast, VButton, VModal, VSpace } from '@halo-dev/components';
 import { useMutation, useQueryClient } from '@tanstack/vue-query';
-import { type AxiosResponse } from 'axios';
 import { ref } from 'vue';
 import ProjectForm from './ProjectForm.vue';
 
@@ -26,19 +25,36 @@ const modal = ref();
 const { mutate, isLoading } = useMutation({
   mutationKey: ['plugin-static-pages:update-project'],
   mutationFn: async ({ data }: { data: ProjectFormState }) => {
-    const { data: projectToUpdate } = await axiosInstance.get(
-      `/apis/staticpage.halo.run/v1alpha1/projects/${props.project.metadata.name}`
-    );
-
-    projectToUpdate.spec = {
-      ...projectToUpdate.spec,
-      ...data,
-    };
-
-    return await axiosInstance.put<Project, AxiosResponse<Project>, Project>(
-      `/apis/staticpage.halo.run/v1alpha1/projects/${props.project.metadata.name}`,
-      projectToUpdate
-    );
+    return await staticPageCoreApiClient.project.patchProject({
+      name: props.project.metadata.name,
+      jsonPatchInner: [
+        {
+          op: 'add',
+          path: '/spec/title',
+          value: data.title,
+        },
+        {
+          op: 'add',
+          path: '/spec/icon',
+          value: data.icon || '',
+        },
+        {
+          op: 'add',
+          path: '/spec/description',
+          value: data.description || '',
+        },
+        {
+          op: 'add',
+          path: '/spec/directory',
+          value: data.directory,
+        },
+        {
+          op: 'add',
+          path: '/spec/rewrites',
+          value: data.rewrites || [],
+        },
+      ],
+    });
   },
   onSuccess() {
     Toast.success('保存成功');
@@ -62,9 +78,7 @@ function handleDelete() {
     description: '确定要删除该静态网页项目吗？此操作无法恢复。',
     confirmType: 'danger',
     async onConfirm() {
-      await axiosInstance.delete(
-        `/apis/staticpage.halo.run/v1alpha1/projects/${props.project.metadata.name}`
-      );
+      await staticPageCoreApiClient.project.deleteProject({ name: props.project.metadata.name });
 
       Toast.success('删除成功');
 
@@ -97,6 +111,7 @@ function handleDelete() {
     <template #footer>
       <div class="flex justify-between">
         <VSpace>
+          <!-- @vue-ignore -->
           <VButton
             type="secondary"
             :loading="isLoading"

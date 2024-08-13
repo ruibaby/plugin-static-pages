@@ -1,8 +1,8 @@
 <script lang="ts" setup>
+import { staticPageConsoleApiClient } from '@/api';
+import type { Project, ProjectFile } from '@/api/generated';
 import FileIcon from '@/components/FileIcon.vue';
-import type { Project, ProjectFile } from '@/types';
 import { normalizePath } from '@/utils/path';
-import { axiosInstance } from '@halo-dev/api-client';
 import {
   Dialog,
   IconDeleteBin,
@@ -37,14 +37,16 @@ const {
 } = useQuery({
   queryKey: ['plugin-static-pages:files', props.project.metadata.name, '/'],
   queryFn: async () => {
-    const { data } = await axiosInstance.get<ProjectFile[]>(
-      `/apis/console.api.staticpage.halo.run/v1alpha1/projects/${props.project.metadata.name}/files?path=/`
-    );
+    const { data } = await staticPageConsoleApiClient.project.listFilesInProject({
+      name: props.project.metadata.name,
+      path: '/',
+    });
+
     return data
       .sort((a, b) => {
         if (a.directory && !b.directory) return -1;
         if (!a.directory && b.directory) return 1;
-        return a.name.localeCompare(b.name);
+        return a.name!.localeCompare(b.name!);
       })
       .map((item) => {
         return { ...item, children: [] };
@@ -73,7 +75,7 @@ async function onAfterDrop() {}
 function getFileFullPath(stat: Stat<ProjectFile>): string {
   const parent = stat.parent;
   if (!parent) {
-    return stat.data.name;
+    return stat.data.name!;
   }
   return getFileFullPath(parent) + '/' + stat.data.name;
 }
@@ -83,16 +85,15 @@ async function onNodeOpen(stat: Stat<ProjectFile>) {
     return;
   }
 
-  const { data } = await axiosInstance.get<ProjectFile[]>(
-    `/apis/console.api.staticpage.halo.run/v1alpha1/projects/${
-      props.project.metadata.name
-    }/files?path=${normalizePath('/', getFileFullPath(stat))}`
-  );
+  const { data } = await staticPageConsoleApiClient.project.listFilesInProject({
+    name: props.project.metadata.name,
+    path: normalizePath('/', getFileFullPath(stat)),
+  });
 
   const childrenMap = stat.children.map((item) => item.data.name);
 
   data.forEach((file) => {
-    if (childrenMap.includes(file.name)) {
+    if (childrenMap.includes(file.name!)) {
       return;
     }
 
@@ -157,9 +158,10 @@ function onContextMenu(e: MouseEvent, node: ProjectFile, stat: Stat<ProjectFile>
             async onConfirm() {
               const path = normalizePath('/', getFileFullPath(stat));
 
-              await axiosInstance.delete(
-                `/apis/console.api.staticpage.halo.run/v1alpha1/projects/${props.project.metadata.name}/files?path=${path}`
-              );
+              await staticPageConsoleApiClient.project.deleteFileInProject({
+                name: props.project.metadata.name,
+                path,
+              });
 
               queryClient.invalidateQueries([
                 'plugin-static-pages:files',

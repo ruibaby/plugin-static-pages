@@ -1,8 +1,7 @@
 <script lang="ts" setup>
+import { staticPageCoreApiClient } from '@/api';
 import ProjectCard from '@/components/ProjectCard.vue';
 import ProjectCreationModal from '@/components/ProjectCreationModal.vue';
-import type { ListResponse, Project } from '@/types';
-import { axiosInstance } from '@halo-dev/api-client';
 import { IconAddCircle, VLoading, VPageHeader } from '@halo-dev/components';
 import { useQuery } from '@tanstack/vue-query';
 import { ref } from 'vue';
@@ -11,9 +10,7 @@ import CarbonWebServicesContainer from '~icons/carbon/web-services-container';
 const { data, isLoading } = useQuery({
   queryKey: ['plugin-static-pages:list'],
   queryFn: async () => {
-    const { data } = await axiosInstance.get<ListResponse<Project>>(
-      '/apis/staticpage.halo.run/v1alpha1/projects'
-    );
+    const { data } = await staticPageCoreApiClient.project.listProject();
     return data;
   },
   refetchInterval(data) {

@@ -2,10 +2,10 @@ plugins {
     id 'java'
     id "com.github.node-gradle.node" version "5.0.0"
     id "io.freefair.lombok" version "8.0.1"
-    id "run.halo.plugin.devtools" version "0.0.7"
+    id "run.halo.plugin.devtools" version "0.1.1"
 }
 
-group 'run.halo.starter'
+group 'cc.ryanc.staticpages'
 sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
@@ -55,4 +55,31 @@ halo {
     imageName = 'docker.1panel.live/halohub/halo'
     version = '2.17'
     debug = true
+}
+
+haloPlugin {
+    watchDomains {
+        consoleSource {
+            files files('theme')
+            exclude "**/src/main/resources/**"
+        }
+    }
+    openApi {
+        outputDir = file("$rootDir/api-docs/openapi/v3_0")
+        groupingRules {
+            staticPageApi {
+                displayName = 'Extension API for Static Page'
+                pathsToMatch = [
+                    '/apis/staticpage.halo.run/v1alpha1/**',
+                    '/apis/console.api.staticpage.halo.run/v1alpha1/**'
+                ]
+            }
+        }
+        groupedApiMappings = [
+                '/v3/api-docs/staticPageApi': 'staticPageApi.json'
+        ]
+        generator {
+            outputDir = file("${projectDir}/ui/src/api/generated")
+        }
+    }
 }

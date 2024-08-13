@@ -87,7 +87,7 @@ public class PageProjectEndpoint implements CustomEndpoint {
                     .required(false)
                     .name("path")
                 )
-                .response(responseBuilder().implementation(String.class))
+                .response(responseBuilder().implementationArray(ProjectFile.class))
             )
             .DELETE("/projects/{name}/files", request -> {
                     var projectName = request.pathVariable("name");

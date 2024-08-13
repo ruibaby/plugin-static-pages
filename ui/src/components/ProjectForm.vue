@@ -22,11 +22,11 @@ function onSubmit(data: ProjectFormState) {
 <template>
   <FormKit
     id="static-page-project-form"
+    v-slot="{ value }"
     type="form"
     name="static-page-project-form"
     :config="{ validationVisibility: 'submit' }"
     @submit="onSubmit"
-    #default="{ value }"
   >
     <FormKit
       type="text"
@@ -40,12 +40,13 @@ function onSubmit(data: ProjectFormState) {
       name="directory"
       :model-value="formState?.directory"
       label="目录"
-      :help="value.directory ? `访问地址为：/${value.directory}` : ''"
+      :help="value?.directory ? `访问地址为：/${value.directory}` : ''"
       validation="required:trim|matches:/^\S(.*\S)?$/"
       :validation-messages="{
         matches: '不能以空格开头或结尾',
       }"
     ></FormKit>
+    <!-- @vue-ignore -->
     <FormKit type="attachment" name="icon" label="图标" :model-value="formState?.icon"> </FormKit>
     <FormKit
       type="textarea"
@@ -53,6 +54,7 @@ function onSubmit(data: ProjectFormState) {
       :model-value="formState?.description"
       label="描述"
     ></FormKit>
+    <!-- @vue-ignore -->
     <FormKit type="repeater" :value="formState?.rewrites" name="rewrites" label="重写规则">
       <FormKit type="text" name="source" label="源" validation="required"></FormKit>
       <FormKit type="text" name="target" label="目标" validation="required"></FormKit>

@@ -8,6 +8,7 @@ import grapesjsBlocksBasic from 'grapesjs-blocks-basic';
 import grapesjsPresetWebpage from 'grapesjs-preset-webpage';
 // @ts-ignore
 import grapesjsPluginForms from 'grapesjs-plugin-forms';
+// @ts-ignore
 import grapesjsTabs from 'grapesjs-tabs';
 
 import { onMounted, onUnmounted, shallowRef, watch } from 'vue';

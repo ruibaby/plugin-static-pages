@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import type { Project } from '@/types';
+import { staticPageConsoleApiClient } from '@/api';
+import type { Project } from '@/api/generated';
 import { normalizePath } from '@/utils/path';
-import { axiosInstance } from '@halo-dev/api-client';
 import { Toast, VButton, VModal, VSpace } from '@halo-dev/components';
 import { useQueryClient } from '@tanstack/vue-query';
 import { ref } from 'vue';
@@ -21,13 +21,13 @@ async function onSubmit({ path }: { path: string }) {
   try {
     submitting.value = true;
 
-    await axiosInstance.post(
-      `/apis/console.api.staticpage.halo.run/v1alpha1/projects/${props.project.metadata.name}/file`,
-      {
+    await staticPageConsoleApiClient.project.createFileOrDirectory({
+      name: props.project.metadata.name,
+      createFileRequest: {
         path: normalizePath(props.baseDir, path),
         isDir: props.isDir,
-      }
-    );
+      },
+    });
 
     Toast.success('创建成功');
 
@@ -50,6 +50,7 @@ async function onSubmit({ path }: { path: string }) {
 
     <template #footer>
       <VSpace>
+        <!-- @vue-ignore -->
         <VButton
           :loading="submitting"
           type="secondary"
