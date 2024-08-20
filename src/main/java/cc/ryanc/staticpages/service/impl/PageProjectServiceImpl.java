@@ -1,8 +1,7 @@
 package cc.ryanc.staticpages.service.impl;
 
 import static cc.ryanc.staticpages.utils.FileUtils.checkDirectoryTraversal;
-import static cc.ryanc.staticpages.utils.FileUtils.deleteFileSilently;
-import static java.nio.file.StandardOpenOption.CREATE_NEW;
+import static java.nio.file.StandardOpenOption.CREATE;
 
 import cc.ryanc.staticpages.extensions.Project;
 import cc.ryanc.staticpages.model.ProjectFile;
@@ -193,11 +192,7 @@ public class PageProjectServiceImpl implements PageProjectService {
     }
 
     private Mono<Path> writeToFile(Flux<DataBuffer> content, Path targetPath) {
-        return Mono.defer(// we have to use defer method to obtain a fresh path
-                () -> DataBufferUtils.write(content, targetPath, CREATE_NEW))
-            // Delete file already wrote partially into attachment folder
-            // in case of content is terminated with an error
-            .onErrorResume(t -> deleteFileSilently(targetPath).then(Mono.error(t)))
+        return Mono.defer(() -> DataBufferUtils.write(content, targetPath, CREATE))
             .thenReturn(targetPath);
     }
 
