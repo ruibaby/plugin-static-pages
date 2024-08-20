@@ -22,4 +22,6 @@ public interface PageProjectService {
     Mono<Path> createFile(String projectName, String path, boolean dir);
 
     Mono<Void> deleteProject(Project project);
+
+    Path determinePath(String directory);
 }

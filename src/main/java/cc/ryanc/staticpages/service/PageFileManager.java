@@ -10,4 +10,6 @@ public interface PageFileManager {
     Mono<Void> writeString(Path path, String content);
 
     Mono<Void> createFile(Path filePath, boolean dir);
+
+    Mono<Void> move(Path source, Path target);
 }

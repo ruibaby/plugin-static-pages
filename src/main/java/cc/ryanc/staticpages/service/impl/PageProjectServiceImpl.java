@@ -162,6 +162,11 @@ public class PageProjectServiceImpl implements PageProjectService {
             .then();
     }
 
+    @Override
+    public Path determinePath(String directory) {
+        return determineProjectPath(directory);
+    }
+
     Path extractProjectFilePath(Project project, String extractPath) {
         var segments = pathSegments(extractPath);
         return concatPath(determineProjectPath(project.getSpec().getDirectory()), segments);
