@@ -82,7 +82,7 @@ public class ProjectReconciler implements Reconciler<Reconciler.Request> {
             project.getStatus().setPhase(FAILED);
             var condition = Condition.builder()
                 .type("UnexpectedState")
-                .reason("Failed to move directory")
+                .reason("FailedToMoveDirectory")
                 .message(e.getMessage())
                 .status(ConditionStatus.FALSE)
                 .lastTransitionTime(Instant.now())
