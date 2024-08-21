@@ -10,6 +10,7 @@ configuration.ts
 git_push.sh
 index.ts
 models/add-operation.ts
+models/condition.ts
 models/copy-operation.ts
 models/create-file-request.ts
 models/index.ts
@@ -20,6 +21,7 @@ models/project-file.ts
 models/project-list.ts
 models/project-rewrite.ts
 models/project-spec.ts
+models/project-status.ts
 models/project.ts
 models/remove-operation.ts
 models/replace-operation.ts

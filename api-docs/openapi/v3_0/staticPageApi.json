@@ -2,10 +2,10 @@
   "openapi" : "3.0.1",
   "info" : {
     "title" : "Halo",
-    "version" : "2.17.2"
+    "version" : "2.18.0"
   },
   "servers" : [ {
-    "url" : "http://localhost:41681",
+    "url" : "http://localhost:46672",
     "description" : "Generated server url"
   } ],
   "security" : [ {
@@ -436,6 +436,34 @@
           }
         }
       },
+      "Condition" : {
+        "required" : [ "lastTransitionTime", "status", "type" ],
+        "type" : "object",
+        "properties" : {
+          "lastTransitionTime" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "message" : {
+            "maxLength" : 32768,
+            "type" : "string"
+          },
+          "reason" : {
+            "maxLength" : 1024,
+            "pattern" : "^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$",
+            "type" : "string"
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "TRUE", "FALSE", "UNKNOWN" ]
+          },
+          "type" : {
+            "maxLength" : 316,
+            "pattern" : "^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$",
+            "type" : "string"
+          }
+        }
+      },
       "CopyOperation" : {
         "required" : [ "op", "from", "path" ],
         "type" : "object",
@@ -582,6 +610,9 @@
           },
           "spec" : {
             "$ref" : "#/components/schemas/ProjectSpec"
+          },
+          "status" : {
+            "$ref" : "#/components/schemas/ProjectStatus"
           }
         }
       },
@@ -702,6 +733,27 @@
           "title" : {
             "minLength" : 1,
             "type" : "string"
+          }
+        }
+      },
+      "ProjectStatus" : {
+        "required" : [ "conditions" ],
+        "type" : "object",
+        "properties" : {
+          "conditions" : {
+            "type" : "array",
+            "properties" : {
+              "empty" : {
+                "type" : "boolean"
+              }
+            },
+            "items" : {
+              "$ref" : "#/components/schemas/Condition"
+            }
+          },
+          "phase" : {
+            "type" : "string",
+            "enum" : [ "READY", "FAILED" ]
           }
         }
       },

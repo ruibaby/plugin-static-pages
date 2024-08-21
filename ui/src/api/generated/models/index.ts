@@ -1,4 +1,5 @@
 export * from './add-operation';
+export * from './condition';
 export * from './copy-operation';
 export * from './create-file-request';
 export * from './json-patch-inner';
@@ -9,6 +10,7 @@ export * from './project-file';
 export * from './project-list';
 export * from './project-rewrite';
 export * from './project-spec';
+export * from './project-status';
 export * from './remove-operation';
 export * from './replace-operation';
 export * from './test-operation';

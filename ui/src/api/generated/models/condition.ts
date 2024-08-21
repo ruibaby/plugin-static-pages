@@ -13,45 +13,51 @@
  */
 
 
-// May contain unused imports in some cases
-// @ts-ignore
-import type { ProjectRewrite } from './project-rewrite';
 
 /**
  * 
  * @export
- * @interface ProjectSpec
+ * @interface Condition
  */
-export interface ProjectSpec {
+export interface Condition {
     /**
      * 
      * @type {string}
-     * @memberof ProjectSpec
+     * @memberof Condition
      */
-    'description'?: string;
+    'lastTransitionTime': string;
     /**
      * 
      * @type {string}
-     * @memberof ProjectSpec
+     * @memberof Condition
      */
-    'directory': string;
+    'message'?: string;
     /**
      * 
      * @type {string}
-     * @memberof ProjectSpec
+     * @memberof Condition
      */
-    'icon'?: string;
-    /**
-     * 
-     * @type {Array<ProjectRewrite>}
-     * @memberof ProjectSpec
-     */
-    'rewrites'?: Array<ProjectRewrite>;
+    'reason'?: string;
     /**
      * 
      * @type {string}
-     * @memberof ProjectSpec
+     * @memberof Condition
      */
-    'title': string;
+    'status': ConditionStatusEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof Condition
+     */
+    'type': string;
 }
+
+export const ConditionStatusEnum = {
+    True: 'TRUE',
+    False: 'FALSE',
+    Unknown: 'UNKNOWN'
+} as const;
+
+export type ConditionStatusEnum = typeof ConditionStatusEnum[keyof typeof ConditionStatusEnum];
+
 
