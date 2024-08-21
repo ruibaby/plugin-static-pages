@@ -1,12 +1,14 @@
 package cc.ryanc.staticpages.service.impl;
 
 import cc.ryanc.staticpages.service.PageFileManager;
+import cc.ryanc.staticpages.utils.FileUtils;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.util.FileSystemUtils;
 import org.springframework.web.server.ServerWebInputException;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -74,6 +76,32 @@ public class DefaultPageFileManager implements PageFileManager {
                 } catch (IOException e) {
                     log.error("Failed to create file", e);
                     throw new ServerWebInputException("创建文件失败, 请稍后重试", null, e);
+                }
+            })
+            .subscribeOn(Schedulers.boundedElastic())
+            .then();
+    }
+
+    @Override
+    public Mono<Void> move(Path source, Path target) {
+        return Mono.fromRunnable(() -> {
+                try {
+                    FileUtils.ensureEmpty(target);
+                } catch (IOException e) {
+                    throw new UnsupportedOperationException("目标文件夹不为空, 无法移动文件");
+                }
+                try {
+                    if (!Files.exists(target.getParent())) {
+                        Files.createDirectories(target.getParent());
+                    }
+                    if (Files.isDirectory(source) && !Files.exists(target)) {
+                        Files.createDirectories(target);
+                    }
+                    FileSystemUtils.copyRecursively(source, target);
+                    FileSystemUtils.deleteRecursively(source);
+                } catch (IOException e) {
+                    log.error("Failed to move file", e);
+                    throw new IllegalStateException("移动文件或文件夹失败, 请稍后重试", e);
                 }
             })
             .subscribeOn(Schedulers.boundedElastic())

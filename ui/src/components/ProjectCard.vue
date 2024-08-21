@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import type { Project } from '@/api/generated';
+import { ProjectStatusPhaseEnum, type Project } from '@/api/generated';
 import { VAvatar, VButton, VSpace, VStatusDot } from '@halo-dev/components';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import ProjectEditModal from './ProjectEditModal.vue';
 
 const props = withDefaults(
@@ -16,6 +16,20 @@ function handleOpen() {
 }
 
 const editModalVisible = ref(false);
+
+const errorMessage = computed(() => {
+  if (props.project.status?.phase === ProjectStatusPhaseEnum.Ready) {
+    return;
+  }
+
+  const condition = props.project.status?.conditions?.[0];
+
+  if (!condition) {
+    return;
+  }
+
+  return condition.message;
+});
 </script>
 
 <template>
@@ -38,6 +52,8 @@ const editModalVisible = ref(false);
       </RouterLink>
 
       <VStatusDot v-if="!!project.metadata.deletionTimestamp" animate state="warning" />
+
+      <VStatusDot v-if="errorMessage" v-tooltip="errorMessage" animate state="warning" />
     </div>
     <ul class="space-y-2 text-sm text-gray-600 flex-1">
       <li>{{ project.spec.description }}</li>
