@@ -52,8 +52,7 @@ build {
 }
 
 halo {
-    imageName = 'docker.1panel.live/halohub/halo'
-    version = '2.18'
+    version = '2.19'
     debug = true
 }
 

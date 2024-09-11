@@ -18,6 +18,7 @@ export default definePlugin({
           title: '静态网页服务',
           description: '提供静态网页部署服务',
           searchable: true,
+          permissions: ['*'],
           menu: {
             name: '静态网页服务',
             icon: markRaw(CarbonWebServicesContainer),
@@ -35,6 +36,7 @@ export default definePlugin({
         meta: {
           title: '静态网页详情',
           searchable: false,
+          permissions: ['*'],
         },
       },
     },
@@ -47,6 +49,7 @@ export default definePlugin({
         meta: {
           title: '文件编辑',
           searchable: false,
+          permissions: ['*'],
           hideFooter: true,
         },
       },
