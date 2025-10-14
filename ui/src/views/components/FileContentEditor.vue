@@ -72,7 +72,12 @@ async function handleFetchContent() {
     path: props.path,
   });
 
-  content.value = data;
+  // Fix monaco editor
+  if (props.path?.endsWith('.json')) {
+    content.value = JSON.stringify(data, null, 2);
+  } else {
+    content.value = data;
+  }
 }
 
 async function handleSaveContent() {
