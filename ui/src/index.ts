@@ -1,7 +1,6 @@
-import { VLoading } from '@halo-dev/components';
-import { definePlugin } from '@halo-dev/console-shared';
+import { definePlugin } from '@halo-dev/ui-shared';
 import 'uno.css';
-import { defineAsyncComponent, markRaw } from 'vue';
+import { markRaw } from 'vue';
 import CarbonWebServicesContainer from '~icons/carbon/web-services-container';
 import './styles/main.css';
 
@@ -13,10 +12,7 @@ export default definePlugin({
       route: {
         path: 'static-pages',
         name: 'StaticPageProjects',
-        component: defineAsyncComponent({
-          loader: () => import('./views/Projects.vue'),
-          loadingComponent: VLoading,
-        }),
+        component: () => import('./views/Projects.vue'),
         meta: {
           title: '静态网页服务',
           description: '提供静态网页部署服务',
@@ -35,10 +31,7 @@ export default definePlugin({
       route: {
         path: 'static-pages/:name',
         name: 'StaticPageProjectDetail',
-        component: defineAsyncComponent({
-          loader: () => import('./views/ProjectDetail.vue'),
-          loadingComponent: VLoading,
-        }),
+        component: () => import('./views/ProjectDetail.vue'),
         meta: {
           title: '静态网页详情',
           searchable: false,
@@ -51,10 +44,7 @@ export default definePlugin({
       route: {
         path: 'static-pages/:name/files-editor',
         name: 'StaticPageFilesEditor',
-        component: defineAsyncComponent({
-          loader: () => import('./views/FilesEditor.vue'),
-          loadingComponent: VLoading,
-        }),
+        component: () => import('./views/FilesEditor.vue'),
         meta: {
           title: '文件编辑',
           searchable: false,
