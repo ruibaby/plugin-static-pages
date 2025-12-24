@@ -10,7 +10,7 @@ metadata:
     "store.halo.run/app-id": "app-gFkMn"
 spec:
   enabled: true
-  requires: ">=2.17.0"
+  requires: ">=2.22.0"
   author:
     name: Ryan Wang & guqing
     # website: https://github.com/ruibaby

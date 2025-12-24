@@ -3,9 +3,9 @@ import { staticPageConsoleApiClient } from '@/api';
 import type { Project, ProjectFile } from '@/api/generated';
 import FileIcon from '@/components/FileIcon.vue';
 import FileUploadModal from '@/components/FileUploadModal.vue';
-import { formatDatetime, relativeTimeTo } from '@/utils/date';
 import { normalizePath } from '@/utils/path';
 import { Dialog, VButton, VSpace } from '@halo-dev/components';
+import { utils } from '@halo-dev/ui-shared';
 import { useQuery, useQueryClient } from '@tanstack/vue-query';
 import { useRouteQuery } from '@vueuse/router';
 import prettyBytes from 'pretty-bytes';
@@ -270,8 +270,8 @@ function onUploadModalClose() {
                 {{ prettyBytes(file.size || 0) }}
               </td>
               <td class=":uno: cursor-pointer whitespace-nowrap px-4 py-4 text-sm text-gray-500">
-                <span v-tooltip="formatDatetime(file.lastModifiedTime)">
-                  {{ relativeTimeTo(file.lastModifiedTime) }}
+                <span v-tooltip="utils.date.format(file.lastModifiedTime)">
+                  {{ utils.date.timeAgo(file.lastModifiedTime) }}
                 </span>
               </td>
               <td
