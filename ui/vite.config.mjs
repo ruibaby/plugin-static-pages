@@ -1,4 +1,4 @@
-import { viteConfig } from '@halo-dev/ui-plugin-bundler-kit';
+import { viteConfig } from '@halo-dev/ui-plugin-bundler-kit/vite';
 import path from 'node:path';
 import UnoCSS from 'unocss/vite';
 import Icons from 'unplugin-icons/vite';
