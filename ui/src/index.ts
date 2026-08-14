@@ -1,5 +1,4 @@
 import { definePlugin } from '@halo-dev/ui-shared';
-import 'uno.css';
 import { markRaw } from 'vue';
 import CarbonWebServicesContainer from '~icons/carbon/web-services-container';
 import './styles/main.css';
